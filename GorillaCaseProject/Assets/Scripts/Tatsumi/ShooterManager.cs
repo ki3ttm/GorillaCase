@@ -31,7 +31,7 @@ public class ShooterManager : MonoBehaviour {
 
 	[SerializeField] GameObject holdTargetFollowObj = null;    // ホールド中のオブジェクトに追従するオブジェクト
 	public GameObject HoldTargetFollowObj { get { return holdTargetFollowObj; } }
-
+	
 	// Use this for initialization
 	//	void Start() {}
 

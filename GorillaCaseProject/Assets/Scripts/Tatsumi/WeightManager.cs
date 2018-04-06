@@ -15,36 +15,20 @@ public class WeightManager : MonoBehaviour {
 	
 	// 重さレベル
 	[SerializeField] Weight weightLv = WeightDefLv;
-	public Weight WeightLv {
-		get { return weightLv; }
-		set {
-			weightLv = value;
-
-			// 重さレベルによる上下動値の設定
-
-			// 上下動値のリストが不正でならエラー出力
-			if (weightFallSpdList.Count <= (int)WeightLv) {
-				Debug.LogError(WeightLv + "(" + (int)WeightLv  + "の上下動値がリストに存在しません。");
-				return;
-			}
-
-			// 上下動値を設定
-			gravityCtrl.GravityLv = weightFallSpdList[(int)WeightLv];
-		}
-	}
+	public Weight WeightLv { get { return weightLv; } set { weightLv = value; } }
 
 	// 重さレベルによる上下動値
-	[SerializeField] List<float> weightFallSpdList = new List<float>();
+	[SerializeField] List<Vector3> weightFallVelList = new List<Vector3>();
 
-	// 上下動作を処理するコンポーネント
-	GravityController gravityCtrl = null;
+	// 力を処理するコンポーネント
+	ForceManager forceMng = null;
 		
 	// Use this for initialization
 	void Start () {
-		// 上下動作コンポーネント
-		gravityCtrl = GetComponent<GravityController>();
-		if (gravityCtrl == null) {
-			Debug.LogError("GravityControllerが取得できませんでした。\n" +
+		// 力コンポーネント
+		forceMng = GetComponent<ForceManager>();
+		if (forceMng == null) {
+			Debug.LogError("ForceManagerが取得できませんでした。\n" +
 				"name:" + name + " position:" + transform.position);
 		}
 	}
@@ -126,5 +110,17 @@ public class WeightManager : MonoBehaviour {
 				"name:" + name + " position:" + transform.position);
 			return false;
 		}
+	}
+
+	// 現在の重さレベルでの上下動値を返す
+	public Vector3 GetWeightFallVel() {
+		// 上下動値のリストが不正ならエラー出力
+		if (weightFallVelList.Count <= (int)WeightLv) {
+			Debug.LogError(WeightLv + "(" + (int)WeightLv + "の上下動値がリストに存在しません。");
+			return Vector3.zero;
+		}
+
+		// 上下動値を返す
+		return weightFallVelList[(int)WeightLv];
 	}
 }

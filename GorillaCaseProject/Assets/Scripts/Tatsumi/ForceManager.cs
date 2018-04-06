@@ -3,25 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ForceManager : MonoBehaviour {
-	struct Force {
-		float vel;
-	}
-	
-	[SerializeField] bool isGravity = true;			// 重力を適用
-	[SerializeField] bool isAirResistance = true;	// 空気抵抗を適用
-	[SerializeField] List<Force> forceList = new List<Force>();
+	[Header("InspectorReadOnry")]
+	[SerializeField] Vector3 vel;		// 現在の力
+	[SerializeField] Vector3 weightVel; // 重さによる力
+	public Vector3 WeightVel { get { return weightVel; } set { weightVel = value; } }
+
+	WeightManager weightMng = null;	// 重さレベルを管理するコンポーネント
 
 	// Use this for initialization
-//	void Start () {}
+	void Start () {
+		weightMng = GetComponent<WeightManager>();
+		if(weightMng == null) {
+			Debug.LogError("WeightManagerが見つかりませんでした。\n" +
+				"name:" + name + " position:" + transform.position);
+			return;
+		}
+		WeightVel = weightMng.GetWeightFallVel();
+	}
 	
 	// Update is called once per frame
 //	void Update () {}
 
 	void FixedUpdate() {
-		
+		// 落下/浮上
+		Vector3 fall = weightMng.GetWeightFallVel();
+
+		// 合力
+		Vector3 totalVel = (fall);
+
+		// 抵抗
+		totalVel = AirResistance(totalVel);
+
+		transform.position += totalVel;
 	}
 
 	public void AddForce(Vector3 vec) {
+	}
 
+	Vector3 AirResistance(Vector3 _vel) {
+		Vector3 resistanceVec = -vel.normalized;
+		float v = vel.magnitude;
+		vel -= resistanceVec * v;
+		return (resistanceVec * v);
 	}
 }

@@ -28,6 +28,11 @@ public class Player : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		//test
+		if (Input.GetKeyDown("1")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.flying;
+		if (Input.GetKeyDown("2")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.light;
+		if (Input.GetKeyDown("3")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.heavy;
+
 		// 移動
 		Move();
 
