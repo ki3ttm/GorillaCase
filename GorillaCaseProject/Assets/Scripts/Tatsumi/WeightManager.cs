@@ -28,8 +28,7 @@ public class WeightManager : MonoBehaviour {
 		// 力コンポーネント
 		forceMng = GetComponent<ForceManager>();
 		if (forceMng == null) {
-			Debug.LogError("ForceManagerが取得できませんでした。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("ForceManagerが取得できませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
 		}
 	}
 
@@ -38,7 +37,6 @@ public class WeightManager : MonoBehaviour {
 
 	// pull元からpush先へ指定数の重さレベルを移し、移す事に成功したレベル数を返す
 	public int PullWeight(WeightManager _from, int _num = 1) {
-		Debug.LogWarning("PullWeight");
 		int cnt = 0;
 		// 指定数のレベルを移しきるか、値が変更できなくなるまでループ
 		while ((_num > 0) && _from.SubWeightLevel(true) && AddWeightLevel(true)) {
@@ -57,7 +55,6 @@ public class WeightManager : MonoBehaviour {
 	}
 	// 相手側のpull処理を行う事で間接的なpush処理を実装
 	public int PushWeight(WeightManager _to, int _num = 1) {
-		Debug.LogWarning("PushWeight");
 		return _to.PullWeight(this, _num);
 	}
 
@@ -83,8 +80,7 @@ public class WeightManager : MonoBehaviour {
 			// 変更不可
 			return false;
 		default:
-			Debug.LogError("不明な重さレベルに変更されようとしました。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("不明な重さレベルに変更されようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
 			return false;
 		}
 	}
@@ -106,8 +102,7 @@ public class WeightManager : MonoBehaviour {
 			}
 			return true;
 		default:
-			Debug.LogError("不明な重さレベルに変更されようとしました。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("不明な重さレベルに変更されようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
 			return false;
 		}
 	}
@@ -116,8 +111,7 @@ public class WeightManager : MonoBehaviour {
 	public Vector3 GetWeightFallVel() {
 		// 上下動値のリストが不正ならエラー出力
 		if (weightFallVelList.Count <= (int)WeightLv) {
-			Debug.LogError(WeightLv + "(" + (int)WeightLv + ")の上下動値がリストに存在しません。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError(WeightLv + "(" + (int)WeightLv + ")の上下動値がリストに存在しません。\n" + MessageLog.GetNameAndPos(gameObject));
 			return Vector3.zero;
 		}
 

@@ -12,8 +12,7 @@ public class ShooterManager : MonoBehaviour {
 		set { holdTarget = value;
 			Player pl = GetComponent<Player>();
 			if(pl == null) {
-				Debug.LogError("Playerコンポーネントが取得できませんでした。\n" +
-				"name:" + name + " position:" + transform.position);
+				Debug.LogError("Playerコンポーネントが取得できませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
 				return;
 			}
 			if (value != null) {
@@ -45,18 +44,15 @@ public class ShooterManager : MonoBehaviour {
 	}
 
 	public void Shot(Bullet.Type _bulType) {
-		Debug.Log("Shot BulType:" + _bulType + "\n" +
-			"name:" + name + " position:" + transform.position);
+		Debug.Log("Shot BulType:" + _bulType + "\n" + MessageLog.GetNameAndPos(gameObject));
 
 		// 弾のプレハブが正常に設定されていない場合
 		if (bulPrefabs == null) {
-			Debug.LogError("bulPrefabsがnullです。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("bulPrefabsがnullです。\n" + MessageLog.GetNameAndPos(gameObject));
 			return;
 		}
 		if (bulPrefabs.Count < (int)_bulType) {
-			Debug.LogError("bulPrefabsに" + _bulType + "に対応する要素が存在しません。\n" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("bulPrefabsに" + _bulType + "に対応する要素が存在しません。\n" + MessageLog.GetNameAndPos(gameObject));
 			return;
 		}
 
@@ -70,8 +66,7 @@ public class ShooterManager : MonoBehaviour {
 		}
 		// ショット可能状態のショット地点が見つからなければ処理しない
 		if (shooterPoint == null) {
-			Debug.Log("ショット可能状態のショット地点が見つかりませんでした。" +
-				"name:" + name + " position:" + transform.position);
+			Debug.LogError("ショット可能状態のショット地点が見つかりませんでした。" + MessageLog.GetNameAndPos(gameObject));
 			return;
 		}
 

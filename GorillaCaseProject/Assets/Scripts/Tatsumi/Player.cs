@@ -21,7 +21,7 @@ public class Player : MonoBehaviour {
 
 	[SerializeField] Transform plEye = null;			// プレイヤーの目
 	[SerializeField] ShooterManager shooterMng = null;	// ショット管理コンポーネント
-	[SerializeField] bool isFreefFall = false;			// 落下・浮遊による操作不可フラグ
+	[SerializeField] bool isFreeFall = false;			// 落下・浮遊による操作不可フラグ
 
 	// Use this for initialization
 	//	void Start () {}

@@ -70,8 +70,7 @@ public class Bullet : MonoBehaviour {
 		if (colWeightMng != null) {
 			// 発生源オブジェクトが設定されていなければ
 			if (ShooterMng == null) {
-				Debug.LogError("発生源オブジェクトが設定されていません。\n" +
-					"name:" + name + " position:" + transform.position);
+				Debug.LogError("発生源オブジェクトが設定されていません。\n" + MessageLog.GetNameAndPos(gameObject));
 				return;
 			}
 
