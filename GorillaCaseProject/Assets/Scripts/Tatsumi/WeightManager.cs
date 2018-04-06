@@ -116,7 +116,8 @@ public class WeightManager : MonoBehaviour {
 	public Vector3 GetWeightFallVel() {
 		// 上下動値のリストが不正ならエラー出力
 		if (weightFallVelList.Count <= (int)WeightLv) {
-			Debug.LogError(WeightLv + "(" + (int)WeightLv + "の上下動値がリストに存在しません。");
+			Debug.LogError(WeightLv + "(" + (int)WeightLv + ")の上下動値がリストに存在しません。\n" +
+				"name:" + name + " position:" + transform.position);
 			return Vector3.zero;
 		}
 

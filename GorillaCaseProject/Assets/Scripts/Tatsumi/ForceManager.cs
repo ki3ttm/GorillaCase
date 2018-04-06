@@ -26,15 +26,15 @@ public class ForceManager : MonoBehaviour {
 
 	void FixedUpdate() {
 		// 落下/浮上
-		Vector3 fall = weightMng.GetWeightFallVel();
+		Vector3 fall = -weightMng.GetWeightFallVel();
 
 		// 合力
 		Vector3 totalVel = (fall);
 
 		// 抵抗
-		totalVel = AirResistance(totalVel);
+		vel = AirResistance(totalVel);
 
-		transform.position += totalVel;
+		transform.position += vel;
 	}
 
 	public void AddForce(Vector3 vec) {
@@ -43,7 +43,6 @@ public class ForceManager : MonoBehaviour {
 	Vector3 AirResistance(Vector3 _vel) {
 		Vector3 resistanceVec = -vel.normalized;
 		float v = vel.magnitude;
-		vel -= resistanceVec * v;
-		return (resistanceVec * v);
+		return (_vel - resistanceVec * v);
 	}
 }
