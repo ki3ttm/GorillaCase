@@ -18,7 +18,8 @@ public class MemberInfo : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		if (member == Member.NoSelect) {
-			Debug.LogWarning("担当者が設定されていません。\n" + name);
+			Debug.LogWarning("担当者が設定されていません。\n" +
+				"name:" + name + " position:" + transform.position);
 		}
 	}
 
