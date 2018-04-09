@@ -51,7 +51,7 @@ GameObject:
   - component: {fileID: 4189652272068718}
   - component: {fileID: 33161819406211712}
   - component: {fileID: 65095721613814918}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WeightCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ GameObject:
   - component: {fileID: 33239180885855476}
   - component: {fileID: 65038992251029232}
   - component: {fileID: 23574394586129278}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 33156166616622808}
   - component: {fileID: 23991556977235942}
   - component: {fileID: 65590917078670268}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
