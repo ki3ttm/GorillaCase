@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
-	[SerializeField] float walkSpd = 0.2f;	// 地上移動速度
-	[SerializeField] float turnSpd = 2.0f;	// 向き変更速度
-
-	[SerializeField] float jumpVel = 0.0f;			// ジャンプ移動量
-	[SerializeField] float jumpFirstSpd = 1.0f;		// ジャンプ初速
-	[SerializeField] float jumpResistSpd = 0.1f;	// ジャンプ減衰
+	[SerializeField] float walkSpd = 0.2f;			// 地上移動速度
+	[SerializeField] float turnSpd = 2.0f;			// 向き変更速度
+	[SerializeField] float jumpFirstSpd = 500.0f;	// ジャンプ初速
 
 	[SerializeField] bool moveFlg = true;	// 移動可能フラグ
 	public bool MoveFlg { get { return moveFlg; } private set { moveFlg = value; } }
@@ -20,11 +17,38 @@ public class Player : MonoBehaviour {
 	public bool ShotFlg { get { return shotFlg; } private set { shotFlg = value; } }
 
 	[SerializeField] Transform plEye = null;			// プレイヤーの目
-	[SerializeField] ShooterManager shooterMng = null;	// ショット管理コンポーネント
-	[SerializeField] bool isFreeFall = false;			// 落下・浮遊による操作不可フラグ
+	[SerializeField] bool isFreeFall = false;           // 落下・浮遊による操作不可フラグ
+
+	WeightManager weightMng = null;     // 重さ管理コンポーネント
+	ForceManager forceMng = null;       // 物理挙動コンポーネント
+	ShooterManager shooterMng = null;   // ショット管理コンポーネント
 
 	// Use this for initialization
-	//	void Start () {}
+	void Start () {
+		// WeightManagerを取得
+		if (weightMng == null) {
+			weightMng = GetComponent<WeightManager>();
+			if (weightMng == null) {
+				Debug.LogError("WeightManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
+			}
+		}
+
+		// ForceManagerを取得
+		if (forceMng == null) {
+			forceMng = GetComponent<ForceManager>();
+			if (forceMng == null) {
+				Debug.LogError("ForceManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
+			}
+		}
+
+		// ShooterManagerを取得
+		if (shooterMng == null) {
+			shooterMng = GetComponent<ShooterManager>();
+			if (shooterMng == null) {
+				Debug.LogError("ShooterManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
+			}
+		}
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -32,6 +56,7 @@ public class Player : MonoBehaviour {
 		if (Input.GetKeyDown("1")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.flying;
 		if (Input.GetKeyDown("2")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.light;
 		if (Input.GetKeyDown("3")) GetComponent<WeightManager>().WeightLv = WeightManager.Weight.heavy;
+		if (Input.GetKeyDown("4")) GetComponent<ForceManager>().AddForce(new Vector3(1000, 1000, 0));
 
 		// 移動
 		Move();
@@ -53,14 +78,17 @@ public class Player : MonoBehaviour {
 	}
 
 	void Jump() {
-		// ジャンプ不可時は処理しない
-		if (!JumpFlg) return;
-
 		// 入力時以外は処理しない
 		if (!Input.GetKeyDown(KeyCode.Space)) return;
 
-		// ジャンプ移動量にジャンプ初速を設定
-		GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f), ForceMode.Acceleration);
+		// 特定の重さなら処理しない
+		if (weightMng.WeightLv == WeightManager.Weight.heavy) return;
+
+		// ジャンプ不可時は処理しない
+		if (!JumpFlg) return;
+
+		// ジャンプ初速を設定
+		forceMng.AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
 	}
 
 	void Shot() {
@@ -69,7 +97,7 @@ public class Player : MonoBehaviour {
 
 		// ショット処理
 		if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Z)) {
-			// pullショット
+			// pullショット	
 			shooterMng.Shot(Bullet.Type.pull);
 		}
 		if (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.X)) {
