@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Button : MonoBehaviour {
 
@@ -55,21 +56,42 @@ public class Button : MonoBehaviour {
 		//判定用のコライダーと当たっているコライダーを取得
 		Collider[] lHitColliders = Physics.OverlapBox(mWeightCheckCollider.transform.position, mWeightCheckCollider.transform.localScale / 2.0f, mWeightCheckCollider.transform.rotation);
 
-		int lTotalWeight = 0;
+		List<GameObject> lOnBlockList = new List<GameObject>();	//ボタンに乗っているブロックのリスト
 
-		//全てのコライダーの重さを求める
+		//ボタンに乗っている全てのブロックを求める
 		foreach (var lCollider in lHitColliders) {
 			if (lCollider == mWeightCheckCollider) continue;    //自分自身なら処理しない
 
 			GameObject lGameObject = lCollider.transform.gameObject;
 
 			//<TODO>
-			//if (lGameObject.GetComponent<WeightComponent> == null) continue;    //重さを持たないオブジェクトなら処理しない
+			/*
+			if (lGameObject.GetComponent<WeightComponent>() == null) continue;    //重さを持たないオブジェクトなら処理しない
 
-			//重さを足す
-			//<TODO>
-			//lTotalWeight += lGameObject.GetComponent<WeightComponent>.GetTotalWeight();
+			tBlockList = lGameObject.GetComponent<WeightComponent>().GetOnBlockList();
+			foreach(var tBlock in tOnBlockList) {
+				lOnBlockList.PushBack(tBlock);	
+			}
+			*/
+
+			////////<TMP>
+			lOnBlockList.Add(lGameObject);
+			////////<TMP/>
+		}
+
+		//上に乗っているブロックの重複をなくす
+		var lOnBlockDistinctList = lOnBlockList.Distinct();
+
+
+		//<TODO>
+		int lTotalWeight = 0;
+
+		foreach(var tBlock in lOnBlockDistinctList) {
+			//lTotalWeight += tBlock.GetComponent<WeightComponent>().GetWeight();
+
+			////////<TMP>
 			lTotalWeight += 1;
+			////////<TMP/>
 		}
 
 		return lTotalWeight;
