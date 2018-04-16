@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeightBox : MonoBehaviour {
-/*	// 四辺に存在する当たり判定
+	// 四辺に存在する当たり判定
 	[SerializeField] BoxCollider[] fourSideCol = new BoxCollider[4];
+
+	// デバッグ用
+	[SerializeField] int top;
 
 	// Use this for initialization
 	//	void Start () {}
 
 	// Update is called once per frame
-	//	void Update () {}
+	void Update () {
+		// test
+//		if (Input.GetKeyDown(KeyCode.Q)) {
+			top = GetTopBoxList().Count;
+//		}
+	}
 
 	public List<GameObject> GetTopBoxList() {
+		Debug.Log("GetTopBoxList");
 		// 上方向に積まれているボックスのリストを返す
 		List<GameObject> ret = new List<GameObject>();
 		AddChainBoxList(ret, new Vector3(0.0f, 1.0f, 0.0f));
@@ -38,100 +47,206 @@ public class WeightBox : MonoBehaviour {
 	}
 
 	void AddChainBoxList(List<GameObject> _boxList, Vector3 _vec) {
+		// test
+		string testStr = "";
+
+		Debug.Log("AddChainBoxList");
 		// 四辺コライダーを特定方向に近い順に並び替え
 		SortFourSideCollider(_vec);
-	
+
 		// 指定方向から一番目と二番目に近い四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> hitColList = new List<Collider>();
-		hitColList.AddRange(Physics.OverlapBox(fourSideCol[0].center, fourSideCol[0].size));
-		hitColList.AddRange(Physics.OverlapBox(fourSideCol[1].center, fourSideCol[1].size));
+		hitColList.AddRange(Physics.OverlapBox(fourSideCol[0].transform.position, fourSideCol[0].transform.localScale, transform.rotation));
+		hitColList.AddRange(Physics.OverlapBox(fourSideCol[1].transform.position, fourSideCol[1].transform.localScale, transform.rotation));
 
-		// 重複を排除
-		RemoveDuplicate(_boxList);
-
-		// 指定方向から遠い二つのコライダーの片方にでも接触している対象オブジェクトをリストから排除
-		for (int targetIdx = 0; targetIdx < targetList.Count; targetIdx++) {
-			//if( || ){
-			//
-			//}
-		}
-
-		// リスト内の対象オブジェクトを既存リストと重複無しに統合
-		for (int targetIdx = 0; targetIdx < targetList.Count; targetIdx++) {
-			for (int idx = 0; idx < _list.Count; idx++) {
-				// 重複していれば追加しない
-				if (_list[idx] == targetList[targetIdx]) {
-					// 対象オブジェクトリストループのインデックスを進める
-					break;
-				}
-				// 重複が無ければ既存リストに追加
-				else if (idx == _list.Count - 1) {
-					_list.AddRange(targetList.ConvertAll<GameObject>());
-				}
+		// 対象以外のオブジェクトを除外
+		for (int colIdx = hitColList.Count - 1; colIdx >= 0; colIdx--) {
+			if (hitColList[colIdx].tag != "WeightObject") {
+				hitColList.RemoveAt(colIdx);
 			}
 		}
 
-		// リスト内の対象オブジェクトそれぞれで再帰呼び出し
+		// 対象オブジェクトのコライダーのリストをオブジェクトのリストに変換
+		List<GameObject> hitObjList = new List<GameObject>();
+		while (hitColList.Count > 0) {
+			hitObjList.Add(hitColList[0].gameObject);
+			hitColList.RemoveAt(0);
+		}
+
+		// test
+		testStr = "A List.Count:" + hitObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
+			testStr += hitObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// 重複を排除
+		RemoveDuplicateGameObject(hitObjList);
+
+		// 自身を排除
+		hitObjList.Remove(gameObject);
+
+		// test
+		testStr = "B List.Count:" + hitObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
+			testStr += hitObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// 指定方向から三番目と四番目に近い四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
+		List<Collider> outColList = new List<Collider>();
+		outColList.AddRange(Physics.OverlapBox(fourSideCol[2].transform.position, fourSideCol[2].transform.localScale, transform.rotation));
+		outColList.AddRange(Physics.OverlapBox(fourSideCol[3].transform.position, fourSideCol[3].transform.localScale, transform.rotation));
+
+		// 対象以外のオブジェクトを除外
+		for (int colIdx = outColList.Count - 1; colIdx >= 0; colIdx--) {
+			if (outColList[colIdx].tag != "WeightObject") {
+				outColList.RemoveAt(colIdx);
+			}
+		}
+
+		// 除外オブジェクトのコライダーのリストをオブジェクトのリストに変換
+		List<GameObject> outObjList = new List<GameObject>();
+		while (outColList.Count > 0) {
+			outObjList.Add(outColList[0].gameObject);
+			outColList.RemoveAt(0);
+		}
+
+
+		// test
+		testStr = "C outList.Count:" + outObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
+			testStr += outObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// 重複を排除
+		RemoveDuplicateGameObject(outObjList);
+
+		// test
+		testStr = "D outList.Count:" + outObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
+			testStr += outObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// 指定方向から遠い二つのコライダーの片方にでも接触している対象オブジェクトをリストから排除
+		for (int outObjIdx = 0; outObjIdx < outObjList.Count; outObjIdx++) {
+			hitObjList.Remove(outObjList[outObjIdx]);
+		}
+
+		// test
+		testStr = "E List.Count:" + hitObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
+			testStr += hitObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// 既存リストに存在する排除対象オブジェクトをリストから除外
+		for (int boxListIdx = 0; boxListIdx < _boxList.Count; boxListIdx++) {
+			hitObjList.Remove(_boxList[boxListIdx]);
+		}
+
+		// test
+		testStr = "F List.Count:" + hitObjList.Count + " " + name + "\n";
+		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
+			testStr += hitObjList[cnt].name + "\n";
+		}
+		Debug.Log(testStr);
+
+		// リスト内の対象オブジェクトを既存リストと統合
+		_boxList.AddRange(hitObjList);
+
+		// リストの重複を排除
+		RemoveDuplicateGameObject(_boxList);
+
+		// 新たな対象オブジェクトそれぞれで再帰呼び出し
+		for (int hitObjIdx = 0; hitObjIdx < hitObjList.Count; hitObjIdx++) {
+			WeightBox otherBox = hitObjList[hitObjIdx].GetComponent<WeightBox>();
+			if(otherBox != null) {
+				// 再帰呼び出し
+				otherBox.AddChainBoxList(_boxList, _vec);
+			}
+		}
 	}
 
 	// 四辺のコライダーを指定の方向に近い順に並び替え
 	void SortFourSideCollider(Vector3 _vec) {
-		_vec = _vec.normalized;
-		// 指定方向に最も近い四辺コライダーを
-		for (int fourColIdx = 0; fourColIdx < 4; fourColIdx++) {
-			
+		// コライダーが配列に正常に設定されていない場合
+		if (fourSideCol.Length != 4) {
+			Debug.LogError("四辺コライダー配列の要素数が" + fourSideCol.Length + "です。\n" + MessageLog.GetNameAndPos(gameObject));
+			return;
 		}
-
-	}
-
-
-	List<BoxCollider> GetSortColliderList() {
-		// 指定方向に近い順番で四辺のコライダーのリストを作成
-		List<BoxCollider> sortColList = new List<BoxCollider>();
-		for (int colIdx = 0; colIdx < colList.Count; colIdx++) {
-			// ソート用の挿入位置を求める
-			int sortIdx = 0;
-			for (; sortIdx < sortColList.Count; sortIdx++) {
-				// 既存の要素よりも指定方向から遠くなった位置を挿入位置とする
-				bool breakFlg = false;
-				switch (_vec) {
-				case ChainVec.top:
-					breakFlg = (colList[colIdx].transform.position.y <= sortColList[sortIdx].transform.position.y);
-					break;
-				case ChainVec.bottom:
-					breakFlg = (colList[colIdx].transform.position.y >= sortColList[sortIdx].transform.position.y);
-					break;
-				case ChainVec.right:
-					breakFlg = (colList[colIdx].transform.position.x <= sortColList[sortIdx].transform.position.x);
-					break;
-				case ChainVec.left:
-					breakFlg = (colList[colIdx].transform.position.x >= sortColList[sortIdx].transform.position.x);
-					break;
-				default:
-					break;
-				}
-				if (breakFlg) {
-					break;
-				}
+		// 四辺コライダーが設定されていない場合
+		for (int idx = 0; idx < fourSideCol.Length; idx++) {
+			if (fourSideCol[idx] == null) {
+				Debug.LogError("四辺コライダー配列[" + idx + "]が設定されていません。\n" + MessageLog.GetNameAndPos(gameObject));
 			}
-			// 求めた位置に挿入
-			sortColList.Insert(sortIdx, colList[colIdx]);
 		}
+
+		_vec = _vec.normalized;
+
+		// 最も近いコライダーと最も遠いコライダーを求める
+		float near = Mathf.Infinity, far = Mathf.NegativeInfinity;
+		int nearIdx = -1, farIdx = -1;
+		for (int fourSideIdx = 0; fourSideIdx < fourSideCol.Length; fourSideIdx++) {
+			float dis = Vector3.Distance(fourSideCol[fourSideIdx].transform.position, transform.position + _vec);
+			// 最も近いコライダーとの距離とインデックス
+			if (dis < near) {
+				near = dis;
+				nearIdx = fourSideIdx;
+			}
+			// 最も遠いコライダーとの距離とインデックス
+			if (dis > far) {
+				far = dis;
+				farIdx = fourSideIdx;
+			}
+		}
+
+		// 残り二つのコライダーの近い方と遠い方を求める
+		int semiNearIdx = -1, semiFarIdx = -1;
+		near = Mathf.Infinity;
+		far = Mathf.NegativeInfinity;
+		for (int fourSideIdx = 0; fourSideIdx < fourSideCol.Length; fourSideIdx++) {
+			// 最も近いコライダーか最も遠いコライダーであれば処理しない
+			if ((fourSideIdx == nearIdx) || (fourSideIdx == farIdx)) continue;
+
+			float dis = Vector3.Distance(fourSideCol[fourSideIdx].transform.position, transform.position + _vec);
+			// 二番目に近いコライダーとの距離とインデックス
+			if (dis < near) {
+				near = dis;
+				semiNearIdx = fourSideIdx;
+			}
+			// 三番目に遠いコライダーとの距離とインデックス
+			if (dis > far) {
+				far = dis;
+				semiFarIdx = fourSideIdx;
+			}
+		}
+
+		// 順番通りに並び替えた配列を作成
+		BoxCollider[] sortCol = new BoxCollider[4];
+		sortCol[0] = fourSideCol[nearIdx];
+		sortCol[1] = fourSideCol[semiNearIdx];
+		sortCol[2] = fourSideCol[semiFarIdx];
+		sortCol[3] = fourSideCol[farIdx];
+
+		// 既存の配列を並び替え後の配列に変更
+		fourSideCol = sortCol;
 	}
 
 	// GameObjectのリストから重複している要素を排除し、排除した数を返す
-	int RemoveDuplicate(List<BoxCollider> _list) {
+	int RemoveDuplicateGameObject(List<GameObject> _list) {
 		int cnt = 0;
 		// 対象リストから重複を排除
 		for (int targetIdx = 0; targetIdx < _list.Count; targetIdx++) {
-			// 以降に同様の要素が存在すれば
+			// 以降の同様の要素を探す
 			while (_list.LastIndexOf(_list[targetIdx]) > targetIdx) {
 				// 重複している要素を排除
-				targetList.RemoveAt(targetList.LastIndexOf(targetList[targetIdx]);
+				_list.RemoveAt(_list.LastIndexOf(_list[targetIdx]));
 				cnt++;
 			}
 		}
 		return cnt;
 	}
-*/
 }
