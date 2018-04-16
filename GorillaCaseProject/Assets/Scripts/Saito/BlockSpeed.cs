@@ -75,7 +75,7 @@ public class BlockSpeed : MonoBehaviour {
 		return GetAccel(lAccelSet, aWeight);
 	}
 
-	public int GetWeight(CBlockWeight aWeight) {
+	public static int GetWeight(CBlockWeight aWeight) {
 		switch (aWeight)
 		{
 			case CBlockWeight.cHover:

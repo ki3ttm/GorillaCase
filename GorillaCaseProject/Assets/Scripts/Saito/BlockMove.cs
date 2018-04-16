@@ -14,7 +14,7 @@ public class BlockMove : MonoBehaviour {
 	BlockSpeed mBlockSpeed;
 
 	Rigidbody mOwnBody;	//自分のリジッドボディ
-	Rigidbody[] mOtherBodys;	//周りの四つのリジッドボディ
+	Rigidbody[] mOtherBodys;    //周りの四つのリジッドボディ
 
 	// Use this for initialization
 	void Start () {
@@ -26,6 +26,7 @@ public class BlockMove : MonoBehaviour {
 		mOwnBody = GetComponent<Rigidbody>();
 
 		mOtherBodys = GetComponentsInChildren<Rigidbody>();
+		
 	}
 	
 	// Update is called once per frame
@@ -48,51 +49,60 @@ public class BlockMove : MonoBehaviour {
 
 	//ブロックに加速度を適用
 	void Move() {
-
+		
 		//軽さに応じた加速度を取得
 		Vector3 lAccel = mBlockSpeed.GetAccel(mBlockWeight, mEnviroment);
 
-		//真ん中のリジッドボディには、そのままの加速度を適応
-		mOwnBody.AddForce(lAccel, ForceMode.Acceleration);
-
 		//浮いている状態なら、横方向に移動しない
-		if (lAccel.y > 0.0f)
-		{
-			//mOwnBody.velocity = new Vector3(0.0f, mOwnBody.velocity.y, mOwnBody.velocity.z);
+		if (lAccel.y > 0.0f) {
+			mOwnBody.velocity = new Vector3(0.0f, mOwnBody.velocity.y, mOwnBody.velocity.z);
+		}
+
+		MoveOther(lAccel);
+		
+	}
+
+	//周りの４ブロックに加速度を適用
+	void MoveOther(Vector3 aAccel) {
+		
+		//真ん中のリジッドボディには、そのままの加速度を適応
+		mOwnBody.AddForce(aAccel, ForceMode.Acceleration);
+
+		//ブロックを平行にするか
+		//
+		bool lBalance = false;
+
+		//浮いているとき
+		if(aAccel.y > 0.0f) {
+			lBalance = true;
 		}
 
 		//ブロックの角の４つのリジッドボディに加速度を適用する
 		foreach (var lOtherBody in mOtherBodys) {
 
-			//ブロックが浮いているなら
-			//if (mBlockWeight == BlockSpeed.CBlockWeight.cHover) {
-			if (lAccel.y > 0.0f) {
-
+			if(lBalance) {
 				//ブロックが水平になるように、上のほうの角２つには上向きの加速度、下のほうの角２つには
 				//下向きの加速度を与えてやる
 
 				if (lOtherBody.position.y >= transform.position.y) {
-					lOtherBody.AddForce(lAccel * 6, ForceMode.Acceleration);
+					lOtherBody.AddForce(aAccel * 6, ForceMode.Acceleration);
 				}
 				else {
-					lOtherBody.AddForce(lAccel * -4, ForceMode.Acceleration);
+					lOtherBody.AddForce(aAccel * -4, ForceMode.Acceleration);
 				}
 			}
-			//浮いていないなら、そのままの加速度を適用
+			//水平にしないなら、そのままの加速度を適用
 			else {
-				lOtherBody.AddForce(lAccel, ForceMode.Acceleration);
+				lOtherBody.AddForce(aAccel, ForceMode.Acceleration);
 			}
-
 		}
 	}
-
-
 
 	//デバッグ表示
 	void DrawDebug(BlockSpeed.CBlockWeight aWeight) {
 
 		GameObject lDebugText = transform.Find("Debug/WeightText").gameObject;
-		lDebugText.GetComponent<TextMesh>().text = mBlockSpeed.GetWeight(aWeight).ToString() + "/2" ;
+		lDebugText.GetComponent<TextMesh>().text = BlockSpeed.GetWeight(aWeight).ToString() + "/2" ;
 		
 		lDebugText.transform.rotation = Quaternion.identity;
 	}

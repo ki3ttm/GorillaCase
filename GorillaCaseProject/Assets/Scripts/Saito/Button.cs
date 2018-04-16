@@ -20,6 +20,7 @@ public class Button : MonoBehaviour {
 
 		//ボックスキャスト用の箱の取得
 		mWeightCheckCollider = transform.Find("Ledge/WeightCheck").GetComponent<BoxCollider>();
+		mLayerMask = LayerMask.GetMask( new string[] { "Player", "Box" });
 	}
 
 
@@ -54,13 +55,12 @@ public class Button : MonoBehaviour {
 	int GetTotalWeight() {
 
 		//判定用のコライダーと当たっているコライダーを取得
-		Collider[] lHitColliders = Physics.OverlapBox(mWeightCheckCollider.transform.position, mWeightCheckCollider.transform.localScale / 2.0f, mWeightCheckCollider.transform.rotation);
+		Collider[] lHitColliders = Physics.OverlapBox(mWeightCheckCollider.transform.position, mWeightCheckCollider.transform.localScale / 2.0f, mWeightCheckCollider.transform.rotation, mLayerMask);
 
 		List<GameObject> lOnBlockList = new List<GameObject>();	//ボタンに乗っているブロックのリスト
 
 		//ボタンに乗っている全てのブロックを求める
 		foreach (var lCollider in lHitColliders) {
-			if (lCollider == mWeightCheckCollider) continue;    //自分自身なら処理しない
 
 			GameObject lGameObject = lCollider.transform.gameObject;
 
@@ -164,5 +164,7 @@ public class Button : MonoBehaviour {
 	Vector3 mLedgeMoveStart;	//でっぱりの最初の位置
 	Vector3 mLedgeMoveEnd;  //でっぱりが完全に押されたときの位置
 
-	BoxCollider mWeightCheckCollider;	//押されているオブジェクトを見つけるときに使うコライダー
+	BoxCollider mWeightCheckCollider;   //押されているオブジェクトを見つけるときに使うコライダー
+	int mLayerMask;	//押されているオブジェクトを見つけるときのレイヤーマスク
+	
 }
