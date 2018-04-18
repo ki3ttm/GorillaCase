@@ -157,9 +157,9 @@ GameObject:
   - component: {fileID: 114283609017066394}
   - component: {fileID: 136072371934063856}
   - component: {fileID: 54077326463834374}
-  - component: {fileID: 114229561708593476}
-  - component: {fileID: 114329853098353212}
   - component: {fileID: 114413268012219916}
+  - component: {fileID: 114329853098353212}
+  - component: {fileID: 114229561708593476}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1094,19 +1094,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1535679351696758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e504fa952045904fa56cae7da7ca089, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a2f0247b9a1d8d4c9483916346622f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpd: 0.5
-  turnSpd: 3
-  jumpVel: 0
-  jumpFirstSpd: 2
-  jumpResistSpd: 0.15
-  moveFlg: 1
-  jumpFlg: 1
-  shotFlg: 1
-  plCam: {fileID: 20988710807131048}
-  shooterMng: {fileID: 114413268012219916}
+  drag: 1
 --- !u!114 &114276117053970458
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1156,20 +1147,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1535679351696758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 551bd515cc5bcb74b862a09913d47c48, type: 3}
+  m_Script: {fileID: 11500000, guid: 7057baf0257becd49b1f6f1e99d5b09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   weightLv: 1
-  isLanding: 0
-  landingFlg: 1
-  fallVel: 0.01
-  fallSpd:
-  - -0.5
-  - 1
-  - 30
-  fallSpdMax: 100
-  flySpdMax: 10
-  landingObjCnt: 0
+  weightFallVelList: []
 --- !u!114 &114373170483002368
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
-	[SerializeField] float walkSpd = 0.2f;			// 地上移動速度
-	[SerializeField] float turnSpd = 2.0f;			// 向き変更速度
-	[SerializeField] float jumpFirstSpd = 500.0f;	// ジャンプ初速
+	[SerializeField] float walkSpd = 0.2f;				// 地上移動速度
+	[SerializeField] float turnSpd = 2.0f;				// 向き変更速度
+	[SerializeField] float jumpFirstSpd = 400.0f;		// ジャンプ初速
+	[SerializeField] float revJumpFirstSpd = -200.0f;	// 反転時ジャンプ初速
 
 	[SerializeField] bool moveFlg = true;	// 移動可能フラグ
 	public bool MoveFlg { get { return moveFlg; } private set { moveFlg = value; } }
@@ -16,7 +17,9 @@ public class Player : MonoBehaviour {
 	[SerializeField] bool shotFlg = true;	// ショット可能フラグ
 	public bool ShotFlg { get { return shotFlg; } private set { shotFlg = value; } }
 
-	[SerializeField] Transform plEye = null;			// プレイヤーの目
+	[SerializeField] bool revFlg = false;   // 天井行動フラグ
+	public bool RevFlg { get { return revFlg; } private set { revFlg = value; } }
+
 	[SerializeField] bool isFreeFall = false;           // 落下・浮遊による操作不可フラグ
 
 	WeightManager weightMng = null;     // 重さ管理コンポーネント
@@ -74,21 +77,30 @@ public class Player : MonoBehaviour {
 
 		// 入力に応じて移動
 		transform.position += (transform.forward * Input.GetAxis("Horizontal") * walkSpd);
-		plEye.transform.Rotate(-Input.GetAxis("SubVertical") * turnSpd, 0.0f, 0.0f);
 	}
 
 	void Jump() {
 		// 入力時以外は処理しない
 		if (!Input.GetKeyDown(KeyCode.Space)) return;
 
-		// 特定の重さなら処理しない
-		if (weightMng.WeightLv == WeightManager.Weight.heavy) return;
-
 		// ジャンプ不可時は処理しない
 		if (!JumpFlg) return;
 
-		// ジャンプ初速を設定
-		forceMng.AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
+		// 重さによって挙動が変化
+		switch (weightMng.WeightLv) {
+		case WeightManager.Weight.flying:
+			// 接地方向と逆方向にジャンプ
+			forceMng.AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f));
+			break;
+		case WeightManager.Weight.light:
+			// 接地方向と逆方向にジャンプ
+			forceMng.AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
+			break;
+		case WeightManager.Weight.heavy:
+			break;
+		default:
+			break;
+		}
 	}
 
 	void Shot() {
