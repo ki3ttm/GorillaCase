@@ -382,7 +382,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1323134662}
   - component: {fileID: 1323134661}
-  - component: {fileID: 1323134660}
   - component: {fileID: 1323134659}
   - component: {fileID: 1323134658}
   m_Layer: 0
@@ -439,18 +438,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &1323134660
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1323134657}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1323134661
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -465,7 +452,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1323134657}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.53, y: 2.98, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
@@ -765,6 +752,11 @@ Prefab:
     - target: {fileID: 4367295718277118, guid: 98b08a605ca35d54d9d3ea8e7f41ba74, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 54340584930307490, guid: 98b08a605ca35d54d9d3ea8e7f41ba74,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 98b08a605ca35d54d9d3ea8e7f41ba74, type: 2}
