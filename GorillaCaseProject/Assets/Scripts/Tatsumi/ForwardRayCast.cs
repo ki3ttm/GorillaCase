@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FowardRayCast : MonoBehaviour {
+public class ForwardRayCast : MonoBehaviour {
 	[SerializeField] GameObject hitObj = null;  // 照準が当たっているオブジェクト
 	public GameObject HitObj { get { return hitObj; } private set { hitObj = value; } }
 	[SerializeField] float maxDis = 100.0f;		// 最大有効距離

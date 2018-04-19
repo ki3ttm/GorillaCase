@@ -118,4 +118,12 @@ public class WeightManager : MonoBehaviour {
 		// 上下動値を返す
 		return weightFallVelList[(int)WeightLv];
 	}
+
+	// 
+	public List<GameObject> GetCollisionObjectList() {
+		List<GameObject> ret = new List<GameObject>();
+
+
+		return ret;
+	}
 }

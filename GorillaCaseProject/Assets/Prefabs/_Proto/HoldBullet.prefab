@@ -19,6 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4367738110720322}
+  - component: {fileID: 114483523722554604}
   - component: {fileID: 33747152385812282}
   - component: {fileID: 135328451286145200}
   - component: {fileID: 23895687780861314}
@@ -116,6 +117,19 @@ MonoBehaviour:
   maxSpd: 0.05
   shooterMng: {fileID: 0}
   bulType: 2
+--- !u!114 &114483523722554604
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1673841782773688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6573662f064206846bb476a5abb8e93b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  member: 2
+  cmnt: 
 --- !u!135 &135328451286145200
 SphereCollider:
   m_ObjectHideFlags: 1
