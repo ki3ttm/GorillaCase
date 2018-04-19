@@ -13,8 +13,9 @@ public class BlockMove : MonoBehaviour {
 
 	BlockSpeed mBlockSpeed;
 
-	Rigidbody mOwnBody;	//自分のリジッドボディ
-	Rigidbody[] mOtherBodys;    //周りの四つのリジッドボディ
+	List<Rigidbody> mAllBody;	//自分のリジッドボディ
+
+	WaterStop mWaterStop;	//水で止まるようにするスクリプト
 
 	// Use this for initialization
 	void Start () {
@@ -23,20 +24,30 @@ public class BlockMove : MonoBehaviour {
 		//
 		mBlockSpeed = GetComponent<BlockSpeed>();
 
-		mOwnBody = GetComponent<Rigidbody>();
+		mAllBody = new List<Rigidbody>();
+		mAllBody.Add(GetComponent<Rigidbody>());
+		foreach(var t in GetComponentsInChildren<Rigidbody>()) {
+			mAllBody.Add(t);
+		}
 
-		mOtherBodys = GetComponentsInChildren<Rigidbody>();
-		
+		mWaterStop = GetComponentInChildren<WaterStop>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if(transform.position.y <= 0.0f) {
+		if(mWaterStop.IsInWater() == true) {
 			mEnviroment = BlockSpeed.CEnviroment.cWater;
 		}
 		else {
 			mEnviroment = BlockSpeed.CEnviroment.cAir;
+		}
+
+		mWaterStop.DisableCollision();
+		if (mEnviroment == BlockSpeed.CEnviroment.cAir) {
+			if(mBlockWeight == BlockSpeed.CBlockWeight.cLight) {
+				mWaterStop.EnableCollision();
+			}
 		}
 
 		//ブロックの移動
@@ -53,56 +64,24 @@ public class BlockMove : MonoBehaviour {
 		//軽さに応じた加速度を取得
 		Vector3 lAccel = mBlockSpeed.GetAccel(mBlockWeight, mEnviroment);
 
-		//浮いている状態なら、横方向に移動しない
-		if (lAccel.y > 0.0f) {
-			mOwnBody.velocity = new Vector3(0.0f, mOwnBody.velocity.y, mOwnBody.velocity.z);
+		//横方向に移動しない
+		foreach(var lBody in mAllBody) {
+			lBody.velocity = new Vector3(0.0f, lBody.velocity.y, lBody.velocity.z);
 		}
 
-		MoveOther(lAccel);
-		
-	}
 
-	//周りの４ブロックに加速度を適用
-	void MoveOther(Vector3 aAccel) {
-		
-		//真ん中のリジッドボディには、そのままの加速度を適応
-		mOwnBody.AddForce(aAccel, ForceMode.Acceleration);
-
-		//ブロックを平行にするか
-		//
-		bool lBalance = false;
-
-		//浮いているとき
-		if(aAccel.y > 0.0f) {
-			lBalance = true;
-		}
-
-		//ブロックの角の４つのリジッドボディに加速度を適用する
-		foreach (var lOtherBody in mOtherBodys) {
-
-			if(lBalance) {
-				//ブロックが水平になるように、上のほうの角２つには上向きの加速度、下のほうの角２つには
-				//下向きの加速度を与えてやる
-
-				if (lOtherBody.position.y >= transform.position.y) {
-					lOtherBody.AddForce(aAccel * 6, ForceMode.Acceleration);
-				}
-				else {
-					lOtherBody.AddForce(aAccel * -4, ForceMode.Acceleration);
-				}
-			}
-			//水平にしないなら、そのままの加速度を適用
-			else {
-				lOtherBody.AddForce(aAccel, ForceMode.Acceleration);
-			}
+		//リジッドボディに加速度を適用する
+		foreach (var lBody in mAllBody) {
+			lBody.AddForce(lAccel, ForceMode.Acceleration);
 		}
 	}
+	
 
 	//デバッグ表示
 	void DrawDebug(BlockSpeed.CBlockWeight aWeight) {
 
 		GameObject lDebugText = transform.Find("Debug/WeightText").gameObject;
-		lDebugText.GetComponent<TextMesh>().text = BlockSpeed.GetWeight(aWeight).ToString() + "/2" ;
+		lDebugText.GetComponent<TextMesh>().text = BlockSpeed.GetWeight(aWeight).ToString() + "/2";
 		
 		lDebugText.transform.rotation = Quaternion.identity;
 	}
