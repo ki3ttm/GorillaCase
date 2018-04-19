@@ -6,25 +6,11 @@ public class WeightBox : MonoBehaviour {
 	// 四辺に存在する当たり判定
 	[SerializeField] BoxCollider[] fourSideCol = new BoxCollider[4];
 
-//	// デバッグ用
-//	[SerializeField] int top;
-//	[SerializeField] int bottom;
-//	[SerializeField] int left;
-//	[SerializeField] int right;
-//	[SerializeField] List<BoxCollider> topCol;
-//	[SerializeField] List<BoxCollider> underCol;
-
 	// Use this for initialization
 	//	void Start () {}
 
 	// Update is called once per frame
-	void Update () {
-//		// test
-//		top		= GetPileBoxList(Vector3.up).Count;
-//		bottom	= GetPileBoxList(Vector3.down).Count;
-//		left	= GetPileBoxList(Vector3.left).Count;
-//		right	= GetPileBoxList(Vector3.right).Count;
-	}
+//	void Update () {}
 
 	public List<GameObject> GetPileBoxList(Vector3 _vec) {
 		List<GameObject> ret = new List<GameObject>();
