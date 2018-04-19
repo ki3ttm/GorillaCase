@@ -57,7 +57,7 @@ public class Button : MonoBehaviour {
 		//判定用のコライダーと当たっているコライダーを取得
 		Collider[] lHitColliders = Physics.OverlapBox(mWeightCheckCollider.transform.position, mWeightCheckCollider.transform.localScale / 2.0f, mWeightCheckCollider.transform.rotation, mLayerMask);
 
-		List<GameObject> lOnBlockList = new List<GameObject>();	//ボタンに乗っているブロックのリスト
+		List<GameObject> lPushBlockList = new List<GameObject>();	//ボタンに接しているブロックのリスト
 
 		//ボタンに乗っている全てのブロックを求める
 		foreach (var lCollider in lHitColliders) {
@@ -66,28 +66,42 @@ public class Button : MonoBehaviour {
 
 			//<TODO>
 			/*
-			if (lGameObject.GetComponent<WeightComponent>() == null) continue;    //重さを持たないオブジェクトなら処理しない
+			if (lGameObject.GetComponent<WeightManager>() == null) continue;    //重さを持たないオブジェクトなら処理しない
 
-			tBlockList = lGameObject.GetComponent<WeightComponent>().GetOnBlockList();
-			foreach(var tBlock in tOnBlockList) {
-				lOnBlockList.PushBack(tBlock);	
+			List<GameObject> tBlockList;
+			//逆転しているなら、下に接しているブロックを取得
+			if(mIsReverse) {
+				tBlockList = lGameObject.GetComponent<WeightBox>().GetUnderBlockList();
+			}
+			else {
+				tBlockList = lGameObject.GetComponent<WeightBox>().GetOnBlockList();
+			}
+
+			foreach(var tBlock in tBlockList) {
+				lPushBlockList.PushBack(tBlock);	
 			}
 			*/
-
-			////////<TMP>
-			lOnBlockList.Add(lGameObject);
-			////////<TMP/>
+			
+			//そのブロック自身も追加
+			lPushBlockList.Add(lGameObject);
 		}
 
-		//上に乗っているブロックの重複をなくす
-		var lOnBlockDistinctList = lOnBlockList.Distinct();
+		//ブロックの重複をなくす
+		var lPushBlockDistinctList = lPushBlockList.Distinct();
 
 
 		//<TODO>
 		int lTotalWeight = 0;
 
-		foreach(var tBlock in lOnBlockDistinctList) {
-			//lTotalWeight += tBlock.GetComponent<WeightComponent>().GetWeight();
+		foreach(var tBlock in lPushBlockDistinctList) {
+			
+			//逆転しているなら、上向きの力を取得する
+			if(mIsReverse) {
+				//lTotalWeight += BlockMove.GetUpForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
+			}
+			else {
+				//lTotalWeight += BlockMove.GetDownForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
+			}
 
 			////////<TMP>
 			lTotalWeight += 1;
