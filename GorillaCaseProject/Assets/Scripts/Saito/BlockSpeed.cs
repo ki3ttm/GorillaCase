@@ -26,12 +26,6 @@ public class BlockSpeed : MonoBehaviour {
 	AccelSet mAccelSetInWater = new AccelSet(0.5f, -3.0f, -3.0f);
 	
 
-	public enum CBlockWeight {
-		cHover,
-		cLight,
-		cHeavy
-	}
-
 	public enum CEnviroment {
 		cAir,
 		cWater,
@@ -47,19 +41,19 @@ public class BlockSpeed : MonoBehaviour {
 
 	}
 
-	Vector3 GetAccel(AccelSet aAccelSet, CBlockWeight aWeight) {
+	Vector3 GetAccel(AccelSet aAccelSet, WeightManager.Weight aWeight) {
 		switch (aWeight) {
-			case CBlockWeight.cHover:
+			case WeightManager.Weight.flying:
 				return new Vector3(0.0f, aAccelSet.mHoverAccel, 0.0f);
-			case CBlockWeight.cLight:
+			case WeightManager.Weight.light:
 				return new Vector3(0.0f, aAccelSet.mLightAccel, 0.0f);
-			case CBlockWeight.cHeavy:
+			case WeightManager.Weight.heavy:
 				return new Vector3(0.0f, aAccelSet.mHeavyAccel, 0.0f);
 		}
 		return new Vector3(0.0f, 0.0f, 0.0f);
 	}
 
-	public Vector3 GetAccel(CBlockWeight aWeight, CEnviroment aEnviroment) {
+	public Vector3 GetAccel(WeightManager.Weight aWeight, CEnviroment aEnviroment) {
 
 		AccelSet lAccelSet = null;
 
@@ -75,14 +69,14 @@ public class BlockSpeed : MonoBehaviour {
 		return GetAccel(lAccelSet, aWeight);
 	}
 
-	public static int GetWeight(CBlockWeight aWeight) {
+	public static int GetWeight(WeightManager.Weight aWeight) {
 		switch (aWeight)
 		{
-			case CBlockWeight.cHover:
+			case WeightManager.Weight.flying:
 				return 0;
-			case CBlockWeight.cLight:
+			case WeightManager.Weight.light:
 				return 1;
-			case CBlockWeight.cHeavy:
+			case WeightManager.Weight.heavy:
 				return 2;
 		}
 		return -1;
