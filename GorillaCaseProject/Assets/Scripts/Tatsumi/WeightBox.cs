@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class WeightBox : MonoBehaviour {
 	// 四辺に存在する当たり判定
-	[SerializeField] BoxCollider[] fourSideCol = new BoxCollider[4];
+	[SerializeField] GameObject[] fourSideCol = new GameObject[4];
 
 	// Use this for initialization
-	//	void Start () {}
+//	void Start () {}
 
 	// Update is called once per frame
 //	void Update () {}
-
+	
 	public List<GameObject> GetPileBoxList(Vector3 _vec) {
 		List<GameObject> ret = new List<GameObject>();
 		AddChainBoxList(ret, _vec);
@@ -19,8 +19,8 @@ public class WeightBox : MonoBehaviour {
 	}
 
 	void AddChainBoxList(List<GameObject> _boxList, Vector3 _vec) {
-		List<BoxCollider> forward = new List<BoxCollider>();	// 対象コライダー
-		List<BoxCollider> back = new List<BoxCollider>();		// 除外コライダー
+		List<GameObject> forward = new List<GameObject>();	// 対象コライダー
+		List<GameObject> back = new List<GameObject>();		// 除外コライダー
 
 		// test
 		string testStr = "";
@@ -154,7 +154,7 @@ public class WeightBox : MonoBehaviour {
 	}
 
 	// 四辺コライダーが指定方向に存在するか判定して振り分ける
-	void DotFourSideCollider(Vector3 _vec, List<BoxCollider> _forward, List<BoxCollider> _back) {
+	void DotFourSideCollider(Vector3 _vec, List<GameObject> _forward, List<GameObject> _back) {
 		// 四辺コライダーが設定されていない場合
 		if (fourSideCol.Length == 0) {
 			Debug.LogError("四辺コライダー配列の要素が存在していません。\n" + MessageLog.GetNameAndPos(gameObject));
