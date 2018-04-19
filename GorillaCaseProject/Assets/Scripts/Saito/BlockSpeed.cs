@@ -81,4 +81,39 @@ public class BlockSpeed : MonoBehaviour {
 		}
 		return -1;
 	}
+
+	public static int GetUpForce(WeightManager.Weight aWeight, CEnviroment aEnviroment)
+	{
+		return Mathf.Clamp(GetForce(aWeight, aEnviroment), -10, 0) * -1;
+	}
+	public static int GetDownForce(WeightManager.Weight aWeight, CEnviroment aEnviroment)
+	{
+		return Mathf.Clamp(GetForce(aWeight, aEnviroment), 0, 10);
+	}
+	public static int GetForce(WeightManager.Weight aWeight, CEnviroment aEnviroment) {
+		switch (aWeight) {
+			case WeightManager.Weight.flying:
+				if (aEnviroment == CEnviroment.cAir) {
+					return -1;
+				}
+				else {
+					return -2;
+				}
+			case WeightManager.Weight.light:
+				if (aEnviroment == CEnviroment.cAir) {
+					return 1;
+				}
+				else {
+					return -1;
+				}
+			case WeightManager.Weight.heavy:
+				if (aEnviroment == CEnviroment.cAir) {
+					return 2;
+				}
+				else {
+					return 2;
+				}
+		}
+		return -1;
+	}
 }
