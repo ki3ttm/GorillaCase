@@ -17,6 +17,13 @@ public class Button : MonoBehaviour {
 		mLedgeMoveStart = transform.Find("Ledge").localPosition;
 		mLedgeMoveEnd = transform.Find("LedgeEnd").localPosition;
 
+		//ギミックが上を向いていたら
+		if(gameObject.transform.up.y >= 0.9f) {
+			mIsReverse = false;
+		}
+		else {
+			mIsReverse = true;
+		}
 
 		//ボックスキャスト用の箱の取得
 		mWeightCheckCollider = transform.Find("Ledge/WeightCheck").GetComponent<BoxCollider>();
@@ -162,7 +169,6 @@ public class Button : MonoBehaviour {
 	[SerializeField]
 	int mOnWeight;    //押されるのに必要な重さ
 
-	[SerializeField]
 	bool mIsReverse;    //逆向きのスイッチかどうか
 
 
