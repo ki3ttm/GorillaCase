@@ -36,13 +36,13 @@ public class Player : MonoBehaviour {
 			}
 		}
 
-		// ForceManagerを取得
-		if (forceMng == null) {
-			forceMng = GetComponent<ForceManager>();
-			if (forceMng == null) {
-				Debug.LogError("ForceManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
-			}
-		}
+//		// ForceManagerを取得
+//		if (forceMng == null) {
+//			forceMng = GetComponent<ForceManager>();
+//			if (forceMng == null) {
+//				Debug.LogError("ForceManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
+//			}
+//		}
 
 		// ShooterManagerを取得
 		if (shooterMng == null) {
@@ -76,7 +76,9 @@ public class Player : MonoBehaviour {
 		if (!MoveFlg) return;
 
 		// 入力に応じて移動
-		transform.position += (transform.forward * Input.GetAxis("Horizontal") * walkSpd);
+		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * Input.GetAxis("Horizontal") * walkSpd));
+
+		
 	}
 
 	void Jump() {
@@ -90,11 +92,11 @@ public class Player : MonoBehaviour {
 		switch (weightMng.WeightLv) {
 		case WeightManager.Weight.flying:
 			// 接地方向と逆方向にジャンプ
-			forceMng.AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f));
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f));
 			break;
 		case WeightManager.Weight.light:
 			// 接地方向と逆方向にジャンプ
-			forceMng.AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
 			break;
 		case WeightManager.Weight.heavy:
 			break;
