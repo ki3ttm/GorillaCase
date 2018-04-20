@@ -25,7 +25,7 @@ public class WeightBox : MonoBehaviour {
 		// test
 		string testStr = "";
 
-		Debug.Log("AddChainBoxList");
+		//Debug.Log("AddChainBoxList");
 		// 四辺コライダーを指定方向側と反対方向側に振り分け
 		DotFourSideCollider(_vec, forward, back);
 
@@ -50,11 +50,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "A List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 重複を排除
 		RemoveDuplicateGameObject(hitObjList);
@@ -63,11 +65,13 @@ public class WeightBox : MonoBehaviour {
 		hitObjList.Remove(gameObject);
 
 		// test
+		/*
 		testStr = "B List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 指定方向の反対側の四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> outColList = new List<Collider>();
@@ -90,11 +94,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "C outList.Count:" + outObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
 			testStr += outObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 重複を排除
 		RemoveDuplicateGameObject(outObjList);
@@ -103,11 +109,13 @@ public class WeightBox : MonoBehaviour {
 		outObjList.Remove(gameObject);
 
 		// test
+		/*
 		testStr = "D outList.Count:" + outObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
 			testStr += outObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 指定方向から遠いコライダ－に接触している対象オブジェクトをリストから排除
 		for (int outObjIdx = 0; outObjIdx < outObjList.Count; outObjIdx++) {
@@ -115,11 +123,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "E List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 既存リストに存在する排除対象オブジェクトをリストから除外
 		for (int boxListIdx = 0; boxListIdx < _boxList.Count; boxListIdx++) {
@@ -127,11 +137,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "F List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// リスト内の対象オブジェクトを既存リストと統合
 		_boxList.AddRange(hitObjList);

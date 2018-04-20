@@ -106,8 +106,6 @@ public class BlockMove : MonoBehaviour {
 			//水とのコライダーを消す
 			mWaterStop.DisableCollision();
 		}
-		
-
 	}
 	
 	//実質の重さを取得
