@@ -7,6 +7,8 @@ public class Player : MonoBehaviour {
 	[SerializeField] float turnSpd = 2.0f;				// 向き変更速度
 	[SerializeField] float jumpFirstSpd = 400.0f;		// ジャンプ初速
 	[SerializeField] float revJumpFirstSpd = -200.0f;	// 反転時ジャンプ初速
+	[SerializeField] float turnStartSpd = 0.03f;		// 振り向きに必要な速度
+	Vector3 prevPos = Vector3.zero;						// 前回位置
 
 	[SerializeField] bool moveFlg = true;	// 移動可能フラグ
 	public bool MoveFlg { get { return moveFlg; } private set { moveFlg = value; } }
@@ -25,6 +27,8 @@ public class Player : MonoBehaviour {
 	WeightManager weightMng = null;     // 重さ管理コンポーネント
 	ForceManager forceMng = null;       // 物理挙動コンポーネント
 	ShooterManager shooterMng = null;   // ショット管理コンポーネント
+
+	Vector3 rotVec = new Vector3(1.0f, 1.0f, 0.0f);	// 向き
 
 	// Use this for initialization
 	void Start () {
@@ -51,6 +55,14 @@ public class Player : MonoBehaviour {
 				Debug.LogError("ShooterManagerが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
 			}
 		}
+
+		// 開始時の位置を前回位置を保持
+		prevPos = transform.position;
+
+		// 開始時に左向きならプレイヤーとしての向きを左に設定
+		if (Vector3.Dot(transform.forward, Vector3.left) > 0.0f) {
+			rotVec.x = -1.0f;
+		}
 	}
 
 	// Update is called once per frame
@@ -69,6 +81,9 @@ public class Player : MonoBehaviour {
 
 		// ショット
 		Shot();
+
+		// 回転
+		Rotate();
 	}
 
 	void Move() {
@@ -77,8 +92,7 @@ public class Player : MonoBehaviour {
 
 		// 入力に応じて移動
 		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * Input.GetAxis("Horizontal") * walkSpd));
-
-		
+		//transform.position += (Vector3.right * Input.GetAxis("Horizontal") * walkSpd);
 	}
 
 	void Jump() {
@@ -123,4 +137,38 @@ public class Player : MonoBehaviour {
 			shooterMng.Shot(Bullet.Type.hold);
 		}
 	}
+
+	void Rotate() {
+		Rigidbody rb = GetComponent<Rigidbody>();
+
+		if (rb == null) {
+			Debug.LogError("Rigidbodyが見つかりませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
+			return;
+		}
+
+		// 移動方向によって向きを設定
+		Vector3 subPos = (prevPos - transform.position);
+		if (subPos.x < -turnStartSpd) {
+			rotVec.x = 1.0f;
+		} else if (subPos.x > turnStartSpd) {
+			rotVec.x = -1.0f;
+		}
+
+		// 前回位置を更新
+		prevPos = transform.position;
+
+		// 接地方向によって向きを設定
+		if (weightMng.WeightLv == WeightManager.Weight.flying) {
+			rotVec.y = 1.0f;
+		} else {
+			rotVec.y = 0.0f;
+		}
+
+		Debug.Log(rotVec);
+
+		// 設定された向きにスラープ補間
+		Quaternion qt = Quaternion.Euler(0.0f, 90.0f * rotVec.x, rotVec.y * 180.0f);
+		transform.rotation = Quaternion.Slerp(transform.rotation, qt, 0.2f);
+	}
+
 }

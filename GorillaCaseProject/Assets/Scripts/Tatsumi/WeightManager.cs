@@ -20,17 +20,18 @@ public class WeightManager : MonoBehaviour {
 	// 重さレベルによる上下動値
 	[SerializeField] List<Vector3> weightFallVelList = new List<Vector3>();
 
-	// 力を処理するコンポーネント
-	ForceManager forceMng = null;
+//	// 力を処理するコンポーネント
+//	ForceManager forceMng = null;
 		
 	// Use this for initialization
-	void Start () {
-		// 力コンポーネント
-		forceMng = GetComponent<ForceManager>();
-		if (forceMng == null) {
-			Debug.LogError("ForceManagerが取得できませんでした。\n" + MessageLog.GetNameAndPos(gameObject));
-		}
-	}
+//	void Start () {
+//		// 力コンポーネント
+//		forceMng = GetComponent<ForceManager>();
+//		if (forceMng == null) {
+//
+//
+//		}
+//	}
 
 	// Update is called once per frame
 //	void Update() {}
