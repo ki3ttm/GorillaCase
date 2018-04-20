@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 138188508837051034}
   - component: {fileID: 138863067874954346}
   m_Layer: 9
-  m_Name: WeightBox
+  m_Name: WeightBox_old
   m_TagString: WeightObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

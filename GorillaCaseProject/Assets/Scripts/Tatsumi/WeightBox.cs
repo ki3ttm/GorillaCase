@@ -20,7 +20,10 @@ public class WeightBox : MonoBehaviour {
 
 	void AddChainBoxList(List<GameObject> _boxList, Vector3 _vec) {
 		List<GameObject> forward = new List<GameObject>();	// 対象コライダー
-		List<GameObject> back = new List<GameObject>();		// 除外コライダー
+		List<GameObject> back = new List<GameObject>();     // 除外コライダー
+
+		// 判定用マスク
+		int mask = LayerMask.GetMask(new string[] { "Player", "Box" });
 
 		// test
 		string testStr = "";
@@ -32,15 +35,15 @@ public class WeightBox : MonoBehaviour {
 		// 指定方向側の四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> hitColList = new List<Collider>();
 		for (int idx = 0; idx < forward.Count; idx++) {
-			hitColList.AddRange(Physics.OverlapBox(forward[idx].transform.position, forward[idx].transform.localScale * 0.5f, forward[idx].transform.rotation));
+			hitColList.AddRange(Physics.OverlapBox(forward[idx].transform.position, forward[idx].transform.localScale * 0.5f, forward[idx].transform.rotation, mask));
 		}
 
-		// 対象以外のオブジェクトを除外
-		for (int colIdx = hitColList.Count - 1; colIdx >= 0; colIdx--) {
-			if (hitColList[colIdx].tag != "WeightObject") {
-				hitColList.RemoveAt(colIdx);
-			}
-		}
+//		// 対象以外のオブジェクトを除外
+//		for (int colIdx = hitColList.Count - 1; colIdx >= 0; colIdx--) {
+//			if (hitColList[colIdx].tag != "WeightObject") {
+//				hitColList.RemoveAt(colIdx);
+//			}
+//		}
 
 		// 対象オブジェクトのコライダーのリストをオブジェクトのリストに変換
 		List<GameObject> hitObjList = new List<GameObject>();
@@ -76,15 +79,15 @@ public class WeightBox : MonoBehaviour {
 		// 指定方向の反対側の四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> outColList = new List<Collider>();
 		for (int idx = 0; idx < back.Count; idx++) {
-			outColList.AddRange(Physics.OverlapBox(back[idx].transform.position, back[idx].transform.localScale * 0.5f, back[idx].transform.rotation));
+			outColList.AddRange(Physics.OverlapBox(back[idx].transform.position, back[idx].transform.localScale * 0.5f, back[idx].transform.rotation, mask));
 		}
 
-		// 対象以外のオブジェクトを除外
-		for (int colIdx = outColList.Count - 1; colIdx >= 0; colIdx--) {
-			if (outColList[colIdx].tag != "WeightObject") {
-				outColList.RemoveAt(colIdx);
-			}
-		}
+//		// 対象以外のオブジェクトを除外
+//		for (int colIdx = outColList.Count - 1; colIdx >= 0; colIdx--) {
+//			if (outColList[colIdx].tag != "WeightObject") {
+//				outColList.RemoveAt(colIdx);
+//			}
+//		}
 
 		// 除外オブジェクトのコライダーのリストをオブジェクトのリストに変換
 		List<GameObject> outObjList = new List<GameObject>();
