@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 23895687780861314}
   - component: {fileID: 54600150060079364}
   - component: {fileID: 114271431871021156}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: HoldBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

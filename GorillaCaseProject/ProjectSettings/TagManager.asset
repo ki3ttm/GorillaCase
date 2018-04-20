@@ -14,13 +14,13 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Box
+  - Stage
+  - Ignore
+  - WaterArea
+  - WaterStop
+  - Bullet
   - 
   - 
   - 

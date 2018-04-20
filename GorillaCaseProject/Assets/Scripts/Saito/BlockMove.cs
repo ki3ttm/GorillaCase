@@ -6,7 +6,7 @@ using UnityEngine;
 public class BlockMove : MonoBehaviour {
 
 	[SerializeField]
-	BlockSpeed.CEnviroment mEnviroment;
+	public BlockSpeed.CEnviroment mEnviroment;
 
 	BlockSpeed mBlockSpeed;
 
@@ -16,6 +16,14 @@ public class BlockMove : MonoBehaviour {
 
 	WeightManager mWeightManager;   //重さを管理するスクリプト
 	WeightBox mWeightObject;   //重さの対象となるスクリプト
+
+	//ブロックの挙動を有効にするかどうか
+	public bool mValid {
+		get { return _mValid; }
+		set { _mValid = value; }
+	}
+	bool _mValid = true;
+
 
 	// Use this for initialization
 	void Start () {
@@ -46,53 +54,70 @@ public class BlockMove : MonoBehaviour {
 			mEnviroment = BlockSpeed.CEnviroment.cAir;
 		}
 
-		mWaterStop.DisableCollision();
-		if (mEnviroment == BlockSpeed.CEnviroment.cAir) {
-			if(mWeightManager.WeightLv == WeightManager.Weight.light) {
-				mWaterStop.EnableCollision();
-			}
-		}
-
 		//ブロックの移動
 		Move();
 
 		//デバッグ表示
-		DrawDebug();
+		//DrawDebug();
 	}
 
 
 	//ブロックに加速度を適用
 	void Move() {
 
-		//実質の軽さを取得
-		WeightManager.Weight lSubstanceWeight = GetSubstanceWeight();
+		if(mValid)
+		{
+			//実質の重さを取得
+			WeightManager.Weight lSubstanceWeight = GetSubstanceWeight();
 
-		//軽さに応じた加速度を取得
-		Vector3 lAccel = mBlockSpeed.GetAccel(lSubstanceWeight, mEnviroment);
+			//実質の重さによって、水と判定を取るかを変更する
+			mWaterStop.DisableCollision();
+			if (mEnviroment == BlockSpeed.CEnviroment.cAir)
+			{
+				if (lSubstanceWeight == WeightManager.Weight.light)
+				{
+					mWaterStop.EnableCollision();
+				}
+			}
 
-		//横方向に移動しない
-		foreach(var lBody in mAllBody) {
-			lBody.velocity = new Vector3(0.0f, lBody.velocity.y, lBody.velocity.z);
+			//軽さに応じた加速度を取得
+			Vector3 lAccel = mBlockSpeed.GetAccel(lSubstanceWeight, mEnviroment);
+
+			//横方向に移動しない
+			foreach (var lBody in mAllBody)
+			{
+				lBody.velocity = new Vector3(0.0f, lBody.velocity.y, lBody.velocity.z);
+			}
+
+			//リジッドボディに加速度を適用する
+			foreach (var lBody in mAllBody)
+			{
+				lBody.AddForce(lAccel, ForceMode.Acceleration);
+			}
 		}
-
-
-		//リジッドボディに加速度を適用する
-		foreach (var lBody in mAllBody) {
-			lBody.AddForce(lAccel, ForceMode.Acceleration);
+		//有効でないなら
+		else
+		{
+			//動きを止める
+			foreach (var lBody in mAllBody) {
+				lBody.velocity = Vector3.zero;
+				lBody.AddForce(Vector3.zero, ForceMode.Acceleration);
+			}
+			//水とのコライダーを消す
+			mWaterStop.DisableCollision();
 		}
 	}
 	
 	//実質の重さを取得
 	WeightManager.Weight GetSubstanceWeight() {
-
-		/*
+		
 		//２の重さなら、実質の重さも２になる
 		if(mWeightManager.WeightLv == WeightManager.Weight.heavy){
 			return WeightManager.Weight.heavy;
 		}
 
-		List<GameObject> lOnBlockList = GetOnBlockList(); //乗っているブロックのリスト
-		List<GameObject> lUnderBlockList = GetUnderBlockList(); //下にあるブロックのリスト
+		List<GameObject> lOnBlockList = mWeightObject.GetPileBoxList(Vector3.up); //乗っているブロックのリスト
+		List<GameObject> lUnderBlockList = mWeightObject.GetPileBoxList(Vector3.down); //下にあるブロックのリスト
 
 		switch(mWeightManager.WeightLv) {
 
@@ -108,7 +133,7 @@ public class BlockMove : MonoBehaviour {
 				foreach (var t in lUnderBlockList) {
 					if (t.GetComponent<WeightManager>().WeightLv == WeightManager.Weight.light) {
 						if(t.GetComponent<BlockMove>().mEnviroment == BlockSpeed.CEnviroment.cWater) {
-							return WeightManager.Weight.light;
+							return WeightManager.Weight.flying;
 						}
 					}
 				}
@@ -124,7 +149,7 @@ public class BlockMove : MonoBehaviour {
 				return WeightManager.Weight.flying;
 
 
-			case WeightManager.Weight.heavy: {
+			case WeightManager.Weight.light: {
 
 					switch (mEnviroment) {
 						case BlockSpeed.CEnviroment.cAir:
@@ -139,7 +164,7 @@ public class BlockMove : MonoBehaviour {
 							foreach (var t in lUnderBlockList) {
 								if (t.GetComponent<WeightManager>().WeightLv == WeightManager.Weight.light) {
 									if (t.GetComponent<BlockMove>().mEnviroment == BlockSpeed.CEnviroment.cWater) {
-										return WeightManager.Weight.light;
+										return WeightManager.Weight.flying;
 									}
 								}
 							}
@@ -161,8 +186,7 @@ public class BlockMove : MonoBehaviour {
 					break;
 				}
 		}
-
-		//*/
+		
 		return WeightManager.Weight.light;
 	}
 

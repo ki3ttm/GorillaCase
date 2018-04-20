@@ -17,6 +17,13 @@ public class Button : MonoBehaviour {
 		mLedgeMoveStart = transform.Find("Ledge").localPosition;
 		mLedgeMoveEnd = transform.Find("LedgeEnd").localPosition;
 
+		//ギミックが上を向いていたら
+		if(gameObject.transform.up.y >= 0.9f) {
+			mIsReverse = false;
+		}
+		else {
+			mIsReverse = true;
+		}
 
 		//ボックスキャスト用の箱の取得
 		mWeightCheckCollider = transform.Find("Ledge/WeightCheck").GetComponent<BoxCollider>();
@@ -64,23 +71,21 @@ public class Button : MonoBehaviour {
 
 			GameObject lGameObject = lCollider.transform.gameObject;
 
-			//<TODO>
-			/*
+
 			if (lGameObject.GetComponent<WeightManager>() == null) continue;    //重さを持たないオブジェクトなら処理しない
 
 			List<GameObject> tBlockList;
 			//逆転しているなら、下に接しているブロックを取得
 			if(mIsReverse) {
-				tBlockList = lGameObject.GetComponent<WeightBox>().GetUnderBlockList();
+				tBlockList = lGameObject.GetComponent<WeightBox>().GetPileBoxList(Vector3.down);
 			}
 			else {
-				tBlockList = lGameObject.GetComponent<WeightBox>().GetOnBlockList();
+				tBlockList = lGameObject.GetComponent<WeightBox>().GetPileBoxList(Vector3.up);
 			}
 
 			foreach(var tBlock in tBlockList) {
-				lPushBlockList.PushBack(tBlock);	
+				lPushBlockList.Add(tBlock);	
 			}
-			*/
 			
 			//そのブロック自身も追加
 			lPushBlockList.Add(lGameObject);
@@ -97,15 +102,11 @@ public class Button : MonoBehaviour {
 			
 			//逆転しているなら、上向きの力を取得する
 			if(mIsReverse) {
-				//lTotalWeight += BlockMove.GetUpForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
+				lTotalWeight += BlockSpeed.GetUpForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
 			}
 			else {
-				//lTotalWeight += BlockMove.GetDownForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
+				lTotalWeight += BlockSpeed.GetDownForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
 			}
-
-			////////<TMP>
-			lTotalWeight += 1;
-			////////<TMP/>
 		}
 
 		return lTotalWeight;
@@ -168,7 +169,6 @@ public class Button : MonoBehaviour {
 	[SerializeField]
 	int mOnWeight;    //押されるのに必要な重さ
 
-	[SerializeField]
 	bool mIsReverse;    //逆向きのスイッチかどうか
 
 

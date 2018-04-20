@@ -7,9 +7,6 @@ public class Goal : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		mOpenRate = 0.0f;
-
-		mDoorMoveStart = transform.Find("Door").localPosition;
-		mDoorMoveEnd = mDoorMoveStart + new Vector3(0.0f, 3.0f, 0.0f);
 	}
 	
 	// Update is called once per frame
@@ -62,7 +59,12 @@ public class Goal : MonoBehaviour {
 
 	//扉の移動部分を移動させる
 	void MoveDoor() {
-		transform.Find("Door").transform.localPosition = Vector3.Lerp(mDoorMoveStart, mDoorMoveEnd, mOpenRate);
+		if(mOpenRate == 1.0f) {
+			mGoalModel.GetComponent<Animator>().SetBool("IsOpen", true);
+		}
+		else if (mOpenRate == 0.0f) {
+			mGoalModel.GetComponent<Animator>().SetBool("IsOpen", false);
+		}
 	}
 
 
@@ -126,6 +128,8 @@ public class Goal : MonoBehaviour {
 	}
 
 
+	[SerializeField]
+	GameObject mGoalModel;
 
 	[SerializeField]
 	List<GameObject> mButtonList;   //ゴールを有効にするのに押す必要のある、ボタンのリスト
@@ -138,9 +142,6 @@ public class Goal : MonoBehaviour {
 
 	float mOpenRate;    //扉の現在開いている割合
 	bool mIsOpen;   //扉が現在開いているか
-
-	Vector3 mDoorMoveStart;	//ドアが動く開始位置
-	Vector3 mDoorMoveEnd;   //ドアが動く終了位置
 
 
 	//デバッグ用

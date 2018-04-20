@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class WeightBox : MonoBehaviour {
 	// 四辺に存在する当たり判定
-	[SerializeField] BoxCollider[] fourSideCol = new BoxCollider[4];
+	[SerializeField] GameObject[] fourSideCol = new GameObject[4];
 
 	// Use this for initialization
-	//	void Start () {}
+//	void Start () {}
 
 	// Update is called once per frame
 //	void Update () {}
-
+	
 	public List<GameObject> GetPileBoxList(Vector3 _vec) {
 		List<GameObject> ret = new List<GameObject>();
 		AddChainBoxList(ret, _vec);
@@ -19,28 +19,31 @@ public class WeightBox : MonoBehaviour {
 	}
 
 	void AddChainBoxList(List<GameObject> _boxList, Vector3 _vec) {
-		List<BoxCollider> forward = new List<BoxCollider>();	// 対象コライダー
-		List<BoxCollider> back = new List<BoxCollider>();		// 除外コライダー
+		List<GameObject> forward = new List<GameObject>();	// 対象コライダー
+		List<GameObject> back = new List<GameObject>();     // 除外コライダー
+
+		// 判定用マスク
+		int mask = LayerMask.GetMask(new string[] { "Player", "Box" });
 
 		// test
 		string testStr = "";
 
-		Debug.Log("AddChainBoxList");
+		//Debug.Log("AddChainBoxList");
 		// 四辺コライダーを指定方向側と反対方向側に振り分け
 		DotFourSideCollider(_vec, forward, back);
 
 		// 指定方向側の四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> hitColList = new List<Collider>();
 		for (int idx = 0; idx < forward.Count; idx++) {
-			hitColList.AddRange(Physics.OverlapBox(forward[idx].transform.position, forward[idx].transform.localScale * 0.5f, forward[idx].transform.rotation));
+			hitColList.AddRange(Physics.OverlapBox(forward[idx].transform.position, forward[idx].transform.localScale * 0.5f, forward[idx].transform.rotation, mask));
 		}
 
-		// 対象以外のオブジェクトを除外
-		for (int colIdx = hitColList.Count - 1; colIdx >= 0; colIdx--) {
-			if (hitColList[colIdx].tag != "WeightObject") {
-				hitColList.RemoveAt(colIdx);
-			}
-		}
+//		// 対象以外のオブジェクトを除外
+//		for (int colIdx = hitColList.Count - 1; colIdx >= 0; colIdx--) {
+//			if (hitColList[colIdx].tag != "WeightObject") {
+//				hitColList.RemoveAt(colIdx);
+//			}
+//		}
 
 		// 対象オブジェクトのコライダーのリストをオブジェクトのリストに変換
 		List<GameObject> hitObjList = new List<GameObject>();
@@ -50,11 +53,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "A List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 重複を排除
 		RemoveDuplicateGameObject(hitObjList);
@@ -63,24 +68,26 @@ public class WeightBox : MonoBehaviour {
 		hitObjList.Remove(gameObject);
 
 		// test
+		/*
 		testStr = "B List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 指定方向の反対側の四辺コライダーに接触している対象オブジェクトのコライダーをリスト化	
 		List<Collider> outColList = new List<Collider>();
 		for (int idx = 0; idx < back.Count; idx++) {
-			outColList.AddRange(Physics.OverlapBox(back[idx].transform.position, back[idx].transform.localScale * 0.5f, back[idx].transform.rotation));
+			outColList.AddRange(Physics.OverlapBox(back[idx].transform.position, back[idx].transform.localScale * 0.5f, back[idx].transform.rotation, mask));
 		}
 
-		// 対象以外のオブジェクトを除外
-		for (int colIdx = outColList.Count - 1; colIdx >= 0; colIdx--) {
-			if (outColList[colIdx].tag != "WeightObject") {
-				outColList.RemoveAt(colIdx);
-			}
-		}
+//		// 対象以外のオブジェクトを除外
+//		for (int colIdx = outColList.Count - 1; colIdx >= 0; colIdx--) {
+//			if (outColList[colIdx].tag != "WeightObject") {
+//				outColList.RemoveAt(colIdx);
+//			}
+//		}
 
 		// 除外オブジェクトのコライダーのリストをオブジェクトのリストに変換
 		List<GameObject> outObjList = new List<GameObject>();
@@ -90,11 +97,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "C outList.Count:" + outObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
 			testStr += outObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 重複を排除
 		RemoveDuplicateGameObject(outObjList);
@@ -103,11 +112,13 @@ public class WeightBox : MonoBehaviour {
 		outObjList.Remove(gameObject);
 
 		// test
+		/*
 		testStr = "D outList.Count:" + outObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < outObjList.Count; cnt++) {
 			testStr += outObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 指定方向から遠いコライダ－に接触している対象オブジェクトをリストから排除
 		for (int outObjIdx = 0; outObjIdx < outObjList.Count; outObjIdx++) {
@@ -115,11 +126,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "E List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// 既存リストに存在する排除対象オブジェクトをリストから除外
 		for (int boxListIdx = 0; boxListIdx < _boxList.Count; boxListIdx++) {
@@ -127,11 +140,13 @@ public class WeightBox : MonoBehaviour {
 		}
 
 		// test
+		/*
 		testStr = "F List.Count:" + hitObjList.Count + " " + name + "\n";
 		for (int cnt = 0; cnt < hitObjList.Count; cnt++) {
 			testStr += hitObjList[cnt].name + "\n";
 		}
 		Debug.Log(testStr);
+		//*/
 
 		// リスト内の対象オブジェクトを既存リストと統合
 		_boxList.AddRange(hitObjList);
@@ -154,7 +169,7 @@ public class WeightBox : MonoBehaviour {
 	}
 
 	// 四辺コライダーが指定方向に存在するか判定して振り分ける
-	void DotFourSideCollider(Vector3 _vec, List<BoxCollider> _forward, List<BoxCollider> _back) {
+	void DotFourSideCollider(Vector3 _vec, List<GameObject> _forward, List<GameObject> _back) {
 		// 四辺コライダーが設定されていない場合
 		if (fourSideCol.Length == 0) {
 			Debug.LogError("四辺コライダー配列の要素が存在していません。\n" + MessageLog.GetNameAndPos(gameObject));
