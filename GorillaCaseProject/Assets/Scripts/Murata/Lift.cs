@@ -57,13 +57,14 @@ public class Lift : MonoBehaviour {
         // ブロックがある
         if (hitInfo.collider != null)
         {
-			WeightManager weight = hitInfo.collider.GetComponent<WeightManager>();
-			if (weight == null)
+			WeightManager boxWeight = hitInfo.collider.GetComponent<WeightManager>();
+			if (boxWeight == null)
 			{
 				return null;
 			}
 
-			if (weight.WeightLv == WeightManager.Weight.heavy)
+            // 自分より重くて持てなかった
+			if (boxWeight.WeightLv > GetComponent<WeightManager>().WeightLv)
 			{
 				// 持ち上げようとする
 				Debug.Log("もてへん");
