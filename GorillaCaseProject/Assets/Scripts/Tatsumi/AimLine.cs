@@ -7,9 +7,8 @@ public class AimLine : MonoBehaviour {
 	[SerializeField] Transform toPoint = null;
 	[SerializeField] GameObject markPrefab = null;
 	[SerializeField] float markInterval = 1.0f;
+	[SerializeField] Player player = null;
 	List<GameObject> markList = new List<GameObject>();
-
-	[SerializeField] int test = 0;
 
 	// Use this for initialization
 	//	void Start () {}
@@ -26,6 +25,20 @@ public class AimLine : MonoBehaviour {
 		}
 		if (markPrefab == null) {
 			Debug.LogError("markPrefabが設定されていません。\n" + MessageLog.GetNameAndPos(gameObject));
+			return;
+		}
+		if (player == null) {
+			Debug.LogError("playerが設定されていません。\n" + MessageLog.GetNameAndPos(gameObject));
+			return;
+		}
+
+		// ショット不可時なら
+		if(!player.ShotFlg) {
+			// 点を全削除
+			while(markList.Count > 0) {
+				Destroy(markList[markList.Count - 1]);
+				markList.RemoveAt(markList.Count - 1);
+			}
 			return;
 		}
 
@@ -52,7 +65,5 @@ public class AimLine : MonoBehaviour {
 		for(int idx = 0; idx < markList.Count; idx++) {
 			markList[idx].transform.position = (fromPoint.position + (vec * markInterval * idx));
 		}
-
-		test = markList.Count;
 	}
 }

@@ -117,8 +117,11 @@ public class Player : MonoBehaviour {
 
 		// 接地判定コライダーが接地していなければ
 		if (Physics.OverlapBox(landingCol.position, landingCol.localScale, landingCol.rotation, LayerMask.GetMask(new string[] { "Stage", "Box" })).Length <= 0) {
-			Debug.Log("接地していない時にジャンプしようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
-			return;
+			// 水上ジャンプ判定
+			if (!((weightMng.WeightLv == WeightManager.Weight.light) && (Physics.OverlapBox(landingCol.position, landingCol.localScale, landingCol.rotation, LayerMask.GetMask(new string[] { "WaterJump" })).Length > 0))) {
+				Debug.Log("非接地時にジャンプしようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
+				return;
+			}
 		}
 
 		// 重さによって挙動が変化
