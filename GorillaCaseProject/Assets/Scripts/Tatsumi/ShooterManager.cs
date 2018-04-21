@@ -44,7 +44,7 @@ public class ShooterManager : MonoBehaviour {
 	}
 
 	public void Shot(Bullet.Type _bulType) {
-		Debug.Log("Shot BulType:" + _bulType + "\n" + MessageLog.GetNameAndPos(gameObject));
+//		Debug.Log("Shot BulType:" + _bulType + "\n" + MessageLog.GetNameAndPos(gameObject));
 
 		// 弾のプレハブが正常に設定されていない場合
 		if (bulPrefabs == null) {

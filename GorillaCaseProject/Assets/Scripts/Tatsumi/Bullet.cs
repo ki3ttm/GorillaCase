@@ -14,23 +14,23 @@ public class Bullet : MonoBehaviour {
 	public float LifeTime { get { return lifeTime; } set { lifeTime = value; } }
 	[SerializeField] WeightManager.Weight weight;
 
-	[SerializeField] float vel = 0.0f; // 移動量
-	public float Vel {
-		get { return vel; }
-		set {
-			vel = value;
-			// 最高移動量を超えていたら補正
-			if (vel > MaxSpd) {
-				vel = MaxSpd;
-			}
-		}
-	}
+//	[SerializeField] float vel = 0.0f; // 移動量
+//	public float Vel {
+//		get { return vel; }
+//		set {
+//			vel = value;
+//			// 最高移動量を超えていたら補正
+//			if (vel > MaxSpd) {
+//				vel = MaxSpd;
+//			}
+//		}
+//	}
 
-	[SerializeField] float spd = 0.05f; // 加速量
+	[SerializeField] float spd = 0.05f; // 速度
 	public float Spd { get { return spd; } private set { spd = value; } }
 
-	[SerializeField] float maxSpd = 0.05f; // 最高移動量
-	public float MaxSpd { get { return maxSpd; } private set { maxSpd = value; } }
+//	[SerializeField] float maxSpd = 0.05f; // 最高移動量
+//	public float MaxSpd { get { return maxSpd; } private set { maxSpd = value; } }
 
 	[SerializeField] ShooterManager shooterMng = null;   // 発生源のキャラクター
 	public ShooterManager ShooterMng { get { return shooterMng; } set { shooterMng = value; } }
@@ -59,10 +59,10 @@ public class Bullet : MonoBehaviour {
 		}
 
 		// 加速
-		vel += spd;
+//		vel += spd;
 
 		// 移動
-		transform.position += transform.forward * vel;
+		transform.position += transform.forward * spd;
 	}
 
 	void OnTriggerEnter(Collider _col) {

@@ -112,9 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifeTime: 1
   weight: 0
-  vel: 0
-  spd: 0.1
-  maxSpd: 0.001
+  spd: 0.5
   shooterMng: {fileID: 0}
   bulType: 2
 --- !u!114 &114483523722554604

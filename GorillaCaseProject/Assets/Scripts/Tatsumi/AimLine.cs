@@ -7,8 +7,11 @@ public class AimLine : MonoBehaviour {
 	[SerializeField] Transform toPoint = null;
 	[SerializeField] GameObject markPrefab = null;
 	[SerializeField] float markInterval = 1.0f;
+	[SerializeField] float maxLen = 100.0f;
 	[SerializeField] Player player = null;
 	List<GameObject> markList = new List<GameObject>();
+
+	[SerializeField] bool isTargetOver = true;
 
 	// Use this for initialization
 	//	void Start () {}
@@ -42,10 +45,22 @@ public class AimLine : MonoBehaviour {
 			return;
 		}
 
-		// 方向と長さを取得
+		// 方向を取得
 		Vector3 vec = (toPoint.position - fromPoint.position).normalized;
-		float dis = Vector3.Distance(fromPoint.position, toPoint.position);
 
+		// 壁までの距離を取得
+		float dis = 0.0f;
+
+		// 照準までの距離
+		if (!isTargetOver) {
+			dis = Vector3.Distance(fromPoint.position, toPoint.position);
+		}
+		else {
+			// 照準方向の壁までの距離
+			RaycastHit hitInfo;
+			Physics.Raycast(fromPoint.position, vec, out hitInfo, maxLen, LayerMask.GetMask(new string[] { "Stage" }));
+			dis = hitInfo.distance;
+		}
 		// 点の数を求める
 		int markNum = (int)(dis / markInterval) + 1;
 
