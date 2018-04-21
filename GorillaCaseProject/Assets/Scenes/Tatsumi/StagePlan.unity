@@ -3153,6 +3153,32 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1237859039}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1248316772 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1830742519594344, guid: 2f4cfc22111c23c4bb25fc99273c2478,
+    type: 2}
+  m_PrefabInternal: {fileID: 383653821}
+--- !u!4 &1248316774 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4157398758024250, guid: 2f4cfc22111c23c4bb25fc99273c2478,
+    type: 2}
+  m_PrefabInternal: {fileID: 383653821}
+--- !u!114 &1248316775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1248316772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a2e09a4bbea3a54aad5b8e652a4998c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fromPoint: {fileID: 1248316774}
+  toPoint: {fileID: 2079720504}
+  markPrefab: {fileID: 1529617654815636, guid: c070d7285d44c7349bdf7cea2a312467, type: 2}
+  markInterval: 1
+  test: 0
 --- !u!1 &1249605453 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1500932794844836, guid: 62df3ef7f6f43854abdd0d4ced34149f,
