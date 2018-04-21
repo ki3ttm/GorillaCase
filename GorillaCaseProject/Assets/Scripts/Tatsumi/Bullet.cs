@@ -42,7 +42,7 @@ public class Bullet : MonoBehaviour {
 	//	void Start () {}
 
 	// Update is called once per frame
-	void Update() {
+	void FixedUpdate() {
 		// 生存時間減少
 		lifeTime -= Time.deltaTime;
 
@@ -67,6 +67,7 @@ public class Bullet : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _col) {
 		WeightManager colWeightMng = _col.GetComponent<WeightManager>();
+		// 対象のオブジェクトに衝突した場合
 		if (colWeightMng != null) {
 			// 発生源オブジェクトが設定されていなければ
 			if (ShooterMng == null) {
@@ -95,6 +96,13 @@ public class Bullet : MonoBehaviour {
 				// もう一方の対象として選択
 				ShooterMng.HoldTarget = _col.gameObject;
 				break;
+			}
+		}
+		// 対象以外のオブジェクトに衝突した場合
+		else {
+			// hold弾なら既存のホールドを解除
+			if (bulType == Type.hold) {
+				ShooterMng.HoldTarget = null;
 			}
 		}
 

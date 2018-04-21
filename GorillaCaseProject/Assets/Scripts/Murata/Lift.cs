@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Lift : MonoBehaviour {
     [SerializeField] float maxDis = 2.0f;
+	[SerializeField] Transform liftPoint = null;
     [SerializeField] GameObject liftObj = null;
 
     // test用
@@ -34,7 +35,7 @@ public class Lift : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            Debug.Log("LSDOWN");
+//            Debug.Log("LSDOWN");
 
             if (liftObj == null)
             {
@@ -49,20 +50,38 @@ public class Lift : MonoBehaviour {
 
     GameObject LiftUp()
     {
-        Debug.Log("LU");
+//        Debug.Log("LU");
         RaycastHit hitInfo;
-        Physics.Raycast(transform.position, transform.forward, out hitInfo, maxDis);
+		Physics.Raycast(transform.position, transform.forward, out hitInfo, maxDis, LayerMask.GetMask(new string[] { "Box" }));
 
         // ブロックがある
         if (hitInfo.collider != null)
         {
+			WeightManager weight = hitInfo.collider.GetComponent<WeightManager>();
+			if (weight == null)
+			{
+				return null;
+			}
+
+			if (weight.WeightLv == WeightManager.Weight.heavy)
+			{
+				// 持ち上げようとする
+				Debug.Log("もてへん");
+				return null;
+			}
+
             liftObj = hitInfo.collider.gameObject;
             // 持ち上げた箱の当たり判定を消す
             BoxCollider col = liftObj.GetComponent<BoxCollider>();
             if (col != null)
             {
                 col.enabled = false;
+				col.GetComponent<BlockMove>().mValid = false;
             }
+
+			// プレイヤーのショットを不可に
+			GetComponent<Player>().ShotFlg = false;
+
             return liftObj;
         }
         return null;
@@ -80,9 +99,14 @@ public class Lift : MonoBehaviour {
         if (col != null)
         {
             col.enabled = true;
-        }
-        // もう持ってないから捨てる
-        liftObj = null;
+			col.GetComponent<BlockMove>().mValid = true;
+		}
+		
+		// プレイヤーのショットを可能に
+		GetComponent<Player>().ShotFlg = true;
+
+		// もう持ってないから捨てる
+		liftObj = null;
     }
 
     void Lifting()
@@ -90,8 +114,9 @@ public class Lift : MonoBehaviour {
        // Debug.Log("a");
         if(liftObj != null)
         {
-          //  Debug.Log("b");
-            liftObj.transform.position = transform.position + new Vector3(0, 1.2f, 0);
+			//  Debug.Log("b");
+			//            liftObj.transform.position = transform.position + new Vector3(0, 1.2f, 0);
+			liftObj.transform.position = liftPoint.position;
         }
     }
 
