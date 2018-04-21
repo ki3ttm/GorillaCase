@@ -113,8 +113,8 @@ MonoBehaviour:
   lifeTime: 1
   weight: 0
   vel: 0
-  spd: 0.01
-  maxSpd: 0.01
+  spd: 0.1
+  maxSpd: 0.001
   shooterMng: {fileID: 0}
   bulType: 1
 --- !u!114 &114421192975257834
