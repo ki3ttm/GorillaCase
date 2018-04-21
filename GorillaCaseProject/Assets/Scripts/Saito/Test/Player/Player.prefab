@@ -695,6 +695,7 @@ GameObject:
   - component: {fileID: 114220204138523928}
   - component: {fileID: 114911534537862066}
   - component: {fileID: 114182484803354522}
+  - component: {fileID: 114184048918117994}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -2829,11 +2830,14 @@ MonoBehaviour:
   turnSpd: 2
   jumpFirstSpd: 400
   revJumpFirstSpd: -200
+  heavyJumpFirstSpd: 80
+  turnStartSpd: 0.01
   moveFlg: 1
   jumpFlg: 1
   shotFlg: 1
   revFlg: 0
   isFreeFall: 0
+  landingCol: {fileID: 0}
 --- !u!114 &114182484803354522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2850,6 +2854,24 @@ MonoBehaviour:
   - {fileID: 1700992427472710}
   - {fileID: 1963195452442960}
   - {fileID: 1324214626319052}
+--- !u!114 &114184048918117994
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1914150197691128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2397f0b453bc89e4d987e742e40dd97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mModelObject: {fileID: 1343592543633480}
+  mMaterial:
+  - {fileID: 2100000, guid: 644d70e9075ca8b40836661aba0ba4f1, type: 2}
+  - {fileID: 2100000, guid: a8d39e902f06425488787f7beba03700, type: 2}
+  - {fileID: 2100000, guid: 17e26d6e67d990748bf51ded22fd6372, type: 2}
+  mChangeTargetMaterial: {fileID: 2100000, guid: 04c9ca3dfa3d55647a53600fbdc6d928,
+    type: 2}
 --- !u!114 &114220204138523928
 MonoBehaviour:
   m_ObjectHideFlags: 1
