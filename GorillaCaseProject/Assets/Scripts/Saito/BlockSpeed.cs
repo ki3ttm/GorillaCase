@@ -4,27 +4,35 @@ using UnityEngine;
 using System;
 
 public class BlockSpeed : MonoBehaviour {
-
-	[Serializable]
-	class AccelSet {
-
-		public AccelSet(float aHoverAccel, float aLightAccel, float aHeavyAccel) {
-			mHoverAccel = aHoverAccel;
-			mLightAccel = aLightAccel;
-			mHeavyAccel = aHeavyAccel;
-		}
-
-		public float mHoverAccel;
-		public float mLightAccel;
-		public float mHeavyAccel;
-	}
-
-	[SerializeField]
-	AccelSet mAccelSetInAir = new AccelSet(0.5f, -3.0f, -3.0f);
-
-	[SerializeField]
-	AccelSet mAccelSetInWater = new AccelSet(0.5f, -3.0f, -3.0f);
 	
+	[SerializeField]
+	float mMaxSpeedInAir_Heavy;
+	[SerializeField]
+	float mMaxSpeedInAir_Light;
+	[SerializeField]
+	float mMaxSpeedInAir_Hover;
+
+	[SerializeField]
+	float mMaxSpeedInWater_Heavy;
+	[SerializeField]
+	float mMaxSpeedInWater_Light;
+	[SerializeField]
+	float mMaxSpeedInWater_Hover;
+
+
+	[SerializeField]
+	float mMaxSpeedSecondInAir_Heavy;
+	[SerializeField]
+	float mMaxSpeedSecondInAir_Light;
+	[SerializeField]
+	float mMaxSpeedSecondInAir_Hover;
+
+	[SerializeField]
+	float mMaxSpeedSecondInWater_Heavy;
+	[SerializeField]
+	float mMaxSpeedSecondInWater_Light;
+	[SerializeField]
+	float mMaxSpeedSecondInWater_Hover;
 
 	public enum CEnviroment {
 		cAir,
@@ -41,33 +49,92 @@ public class BlockSpeed : MonoBehaviour {
 
 	}
 
-	Vector3 GetAccel(AccelSet aAccelSet, WeightManager.Weight aWeight) {
-		switch (aWeight) {
+
+	float GetMaxSpeedInAir(WeightManager.Weight aWeight) {
+		switch (aWeight)
+		{
 			case WeightManager.Weight.flying:
-				return new Vector3(0.0f, aAccelSet.mHoverAccel, 0.0f);
+				return mMaxSpeedInAir_Hover;
 			case WeightManager.Weight.light:
-				return new Vector3(0.0f, aAccelSet.mLightAccel, 0.0f);
+				return mMaxSpeedInAir_Light;
 			case WeightManager.Weight.heavy:
-				return new Vector3(0.0f, aAccelSet.mHeavyAccel, 0.0f);
+				return mMaxSpeedInAir_Heavy;
 		}
+		Debug.LogError("Weightの値がおかしいです", this);
+		return 0.0f;
+	}
+
+	float GetMaxSpeedInWater(WeightManager.Weight aWeight)
+	{
+		switch (aWeight)
+		{
+			case WeightManager.Weight.flying:
+				return mMaxSpeedInWater_Hover;
+			case WeightManager.Weight.light:
+				return mMaxSpeedInWater_Light;
+			case WeightManager.Weight.heavy:
+				return mMaxSpeedInWater_Heavy;
+		}
+		Debug.LogError("Weightの値がおかしいです", this);
+		return 0.0f;
+	}
+
+	public float GetMaxSpeed(WeightManager.Weight aWeight, CEnviroment aEnviroment) {
+		
+		switch (aEnviroment) {
+			case CEnviroment.cAir:
+				return GetMaxSpeedInAir(aWeight);
+			case CEnviroment.cWater:
+				return GetMaxSpeedInWater(aWeight);
+		}
+		Debug.LogError("Weightの値がおかしいです", this);
+		return 0.0f;
+	}
+
+
+	Vector3 GetAccelInAir(WeightManager.Weight aWeight)
+	{
+		switch (aWeight)
+		{
+			case WeightManager.Weight.flying:
+				return new Vector3(0.0f, mMaxSpeedInAir_Hover / mMaxSpeedSecondInAir_Hover, 0.0f);
+			case WeightManager.Weight.light:
+				return new Vector3(0.0f, mMaxSpeedInAir_Light / mMaxSpeedSecondInAir_Light, 0.0f);
+			case WeightManager.Weight.heavy:
+				return new Vector3(0.0f, mMaxSpeedInAir_Heavy / mMaxSpeedSecondInAir_Heavy, 0.0f);
+		}
+		Debug.LogError("Weightの値がおかしいです", this);
 		return new Vector3(0.0f, 0.0f, 0.0f);
 	}
 
-	public Vector3 GetAccel(WeightManager.Weight aWeight, CEnviroment aEnviroment) {
-
-		AccelSet lAccelSet = null;
-
-		switch(aEnviroment) {
-			case CEnviroment.cAir:
-				lAccelSet = mAccelSetInAir;
-				break;
-			case CEnviroment.cWater:
-				lAccelSet = mAccelSetInWater;
-				break;
+	Vector3 GetAccelInWater(WeightManager.Weight aWeight)
+	{
+		switch (aWeight)
+		{
+			case WeightManager.Weight.flying:
+				return new Vector3(0.0f, mMaxSpeedInWater_Hover / mMaxSpeedSecondInWater_Hover, 0.0f);
+			case WeightManager.Weight.light:
+				return new Vector3(0.0f, mMaxSpeedInWater_Light / mMaxSpeedSecondInWater_Light, 0.0f);
+			case WeightManager.Weight.heavy:
+				return new Vector3(0.0f, mMaxSpeedInWater_Heavy / mMaxSpeedSecondInWater_Heavy, 0.0f);
 		}
-		
-		return GetAccel(lAccelSet, aWeight);
+		Debug.LogError("Weightの値がおかしいです", this);
+		return new Vector3(0.0f, 0.0f, 0.0f);
 	}
+
+	public Vector3 GetAccel(WeightManager.Weight aWeight, CEnviroment aEnviroment)
+	{
+		switch (aEnviroment)
+		{
+			case CEnviroment.cAir:
+				return GetAccelInAir(aWeight);
+			case CEnviroment.cWater:
+				return GetAccelInWater(aWeight);
+		}
+		Debug.LogError("Weightの値がおかしいです", this);
+		return new Vector3(0.0f, 0.0f, 0.0f);
+	}
+
 
 	public static int GetWeight(WeightManager.Weight aWeight) {
 		switch (aWeight)

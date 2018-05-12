@@ -48,7 +48,7 @@ public class WeightBox : MonoBehaviour {
 		// 対象オブジェクトのコライダーのリストをオブジェクトのリストに変換
 		List<GameObject> hitObjList = new List<GameObject>();
 		while (hitColList.Count > 0) {
-			hitObjList.Add(hitColList[0].gameObject);
+			hitObjList.Add(hitColList[0].GetComponent<Redirect>().GetRedirect().gameObject);
 			hitColList.RemoveAt(0);
 		}
 

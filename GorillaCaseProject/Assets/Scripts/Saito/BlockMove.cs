@@ -54,13 +54,15 @@ public class BlockMove : MonoBehaviour {
 			mEnviroment = BlockSpeed.CEnviroment.cAir;
 		}
 
-		//ブロックの移動
-		Move();
-
 		//デバッグ表示
 		//DrawDebug();
 	}
 
+	private void FixedUpdate()
+	{
+		//ブロックの移動
+		Move();
+	}
 
 	//ブロックに加速度を適用
 	void Move() {
@@ -89,10 +91,19 @@ public class BlockMove : MonoBehaviour {
 				lBody.velocity = new Vector3(0.0f, lBody.velocity.y, lBody.velocity.z);
 			}
 
+			float lMaxSpeed = mBlockSpeed.GetMaxSpeed(lSubstanceWeight, mEnviroment);
+
 			//リジッドボディに加速度を適用する
 			foreach (var lBody in mAllBody)
 			{
 				lBody.AddForce(lAccel, ForceMode.Acceleration);
+
+				if(lMaxSpeed >= 0.0f) {
+					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, -lMaxSpeed, lMaxSpeed), 0.0f);
+				}
+				else {
+					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, lMaxSpeed, -lMaxSpeed), 0.0f);
+				}
 			}
 		}
 		//有効でないなら
@@ -108,6 +119,8 @@ public class BlockMove : MonoBehaviour {
 		}
 	}
 	
+
+
 	//実質の重さを取得
 	WeightManager.Weight GetSubstanceWeight() {
 		

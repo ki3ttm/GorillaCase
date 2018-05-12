@@ -10,11 +10,8 @@ public class BlockLight : MonoBehaviour {
 
 
 	//色を変更するマテリアル
-	class MaterialAndEmission {
-		public Material mat;
-		public Color emission;
-	}
-	MaterialAndEmission[] mMaterialAndEmission = new MaterialAndEmission[3];
+	public Material mat;
+	public Color emission;
 
 
 	//重さを管理しているコンポーネントへの参照
@@ -29,15 +26,7 @@ public class BlockLight : MonoBehaviour {
 		//マテリアルの取得
 		var lRenderer = mLightObject.GetComponent<Renderer>();
 
-		//Rendererで、マテリアルが並んでいる順番（Rendererの2番目のマテリアルが、一番軽い時に光る）
-		int[] lMatIndex = new int[3] { 2, 1, 0 };
-
-		for(int i = 0; i < 3; i++) {
-			int tMatIdx = lMatIndex[i];
-			mMaterialAndEmission[i] = new MaterialAndEmission();
-			mMaterialAndEmission[i].mat = lRenderer.materials[tMatIdx];
-			mMaterialAndEmission[i].emission = mMaterialAndEmission[i].mat.GetColor("_EmissionColor");
-		}
+		mat = lRenderer.materials[1];
 
 		//コンポーネントの取得
 		mWeightManager = GetComponent<WeightManager>();
@@ -63,17 +52,10 @@ public class BlockLight : MonoBehaviour {
 	void ChangeLight(WeightManager.Weight aWeight) {
 
 		//何番目のマテリアルまで光るか
-		int lLightTopIndex = GetLightTopIndex(aWeight);
+		emission = GetColor(aWeight);
 
 		//光らせる
-		for (int i = 0; i <= lLightTopIndex; i++) {
-			mMaterialAndEmission[i].mat.SetColor("_EmissionColor", mMaterialAndEmission[i].emission);
-		}
-
-		//光らせない
-		for (int i = lLightTopIndex + 1; i < 3; i++) {
-			mMaterialAndEmission[i].mat.SetColor("_EmissionColor", Color.black);
-		}
+		mat.SetColor("_EmissionColor",emission);
 
 		mBeforeWeight = aWeight;
 
@@ -83,16 +65,16 @@ public class BlockLight : MonoBehaviour {
 	}
 
 
-	//その重さで光るマテリアルの、一番大きいインデックス番号を返す
-	static int GetLightTopIndex(WeightManager.Weight aWeight) {
+	//光るマテリアルを返す
+	static Color GetColor(WeightManager.Weight aWeight) {
 		switch (aWeight) {
 			case WeightManager.Weight.flying:
-				return 0;
+				return Color.yellow;
 			case WeightManager.Weight.light:
-				return 1;
+				return Color.green;
 			case WeightManager.Weight.heavy:
-				return 2;
+				return Color.red;
 		}
-		return -1;
+		return Color.black;
 	}
 }

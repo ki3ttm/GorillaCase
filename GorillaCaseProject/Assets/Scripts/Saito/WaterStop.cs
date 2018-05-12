@@ -39,6 +39,7 @@ public class WaterStop : MonoBehaviour {
 	}
 
 	//現在水の中に居るか
+	[SerializeField, SaitoTest_Disable]
 	bool mIsInWater;
 
 	//水との当たり判定を取るコライダー＾

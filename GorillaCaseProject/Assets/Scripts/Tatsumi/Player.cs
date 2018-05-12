@@ -30,7 +30,15 @@ public class Player : MonoBehaviour {
 	ShooterManager shooterMng = null;   // ショット管理コンポーネント
 
 	Vector3 prevPos = Vector3.zero;					// 前回位置
-	Vector3 rotVec = new Vector3(1.0f, 1.0f, 0.0f);	// 向き
+	Vector3 rotVec = new Vector3(1.0f, 1.0f, 0.0f); // 向き
+
+	[SerializeField, SaitoTest_Disable]
+	bool jumpFlag = false;
+
+	[SerializeField, SaitoTest_Disable]
+	float jumpTime = 10.0f;
+
+	bool jumpInput = false;
 
 	// Use this for initialization
 	void Start () {
@@ -83,28 +91,40 @@ public class Player : MonoBehaviour {
 		// 移動
 		Move();
 
-		// ジャンプ
-		Jump();
-
 		// ショット
-		Shot();
+		//Shot();
 
 		// 回転
 		Rotate();
+
+		jumpInput = Input.GetKeyDown(KeyCode.Space);
+		Jump();
 	}
 
 	void Move() {
 		// 移動不可時は処理しない
 		if (!MoveFlg) return;
 
-		// 入力に応じて移動
-		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * Input.GetAxis("Horizontal") * walkSpd));
+		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * Input.GetAxis("Horizontal") * walkSpd * Time.deltaTime * 60.0f));
 		//transform.position += (Vector3.right * Input.GetAxis("Horizontal") * walkSpd);
 	}
 
 	void Jump() {
+
+		//ジャンプ中なら
+		if(jumpFlag) {
+			jumpTime += Time.deltaTime;
+			if(jumpTime >= 0.1f) {
+				jumpFlag = false;
+			}
+		}
+		if(jumpFlag == true) {
+			return;	//ジャンプ中なら処理しない
+		}
+
+
 		// 入力時以外は処理しない
-		if (!Input.GetKeyDown(KeyCode.Space)) return;
+		if (!jumpInput) return;
 
 		// ジャンプ不可時は処理しない
 		if (!JumpFlg) return;
@@ -116,9 +136,9 @@ public class Player : MonoBehaviour {
 		}
 
 		// 接地判定コライダーが接地していなければ
-		if (Physics.OverlapBox(landingCol.position, landingCol.localScale, landingCol.rotation, LayerMask.GetMask(new string[] { "Stage", "Box" })).Length <= 0) {
+		if (Physics.OverlapBox(landingCol.position, landingCol.localScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "Stage", "Box" })).Length <= 0) {
 			// 水上ジャンプ判定
-			if (!((weightMng.WeightLv == WeightManager.Weight.light) && (Physics.OverlapBox(landingCol.position, landingCol.localScale, landingCol.rotation, LayerMask.GetMask(new string[] { "WaterJump" })).Length > 0))) {
+			if (!((weightMng.WeightLv == WeightManager.Weight.light) && (Physics.OverlapBox(landingCol.position, landingCol.localScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "WaterJump" })).Length > 0))) {
 				Debug.Log("非接地時にジャンプしようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
 				return;
 			}
@@ -128,19 +148,23 @@ public class Player : MonoBehaviour {
 		switch (weightMng.WeightLv) {
 		case WeightManager.Weight.flying:
 			// 接地方向と逆方向にジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f));
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f), ForceMode.Impulse);
 			break;
 		case WeightManager.Weight.light:
 			// 接地方向と逆方向にジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f));
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f), ForceMode.Impulse);
 			break;
 		case WeightManager.Weight.heavy:
 			// 接地方向と逆方向に小ジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, heavyJumpFirstSpd, 0.0f));
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, heavyJumpFirstSpd, 0.0f), ForceMode.Impulse);
 			break;
 		default:
 			break;
 		}
+
+		Debug.Log("Jump");
+		jumpFlag = true;
+		jumpTime = 0.0f;
 	}
 
 	void Shot() {
@@ -191,6 +215,12 @@ public class Player : MonoBehaviour {
 		// 設定された向きにスラープ補間
 		Quaternion qt = Quaternion.Euler(0.0f, 90.0f * rotVec.x, rotVec.y * 180.0f);
 		transform.rotation = Quaternion.Slerp(transform.rotation, qt, 0.2f);
+	}
+
+	private void FixedUpdate()
+	{
+		// ジャンプ
+		//Jump();
 	}
 
 }

@@ -15,19 +15,12 @@ public class Button : MonoBehaviour {
 
 		//開始位置と終了位置の取得
 		mLedgeMoveStart = transform.Find("Ledge").localPosition;
-		mLedgeMoveEnd = transform.Find("LedgeEnd").localPosition;
-
-		//ギミックが上を向いていたら
-		if(gameObject.transform.up.y >= 0.9f) {
-			mIsReverse = false;
-		}
-		else {
-			mIsReverse = true;
-		}
+		mLedgeMoveDelta = transform.Find("LedgeEnd").localPosition - transform.Find("LedgeStart").localPosition;
 
 		//ボックスキャスト用の箱の取得
 		mWeightCheckCollider = transform.Find("Ledge/WeightCheck").GetComponent<BoxCollider>();
 		mLayerMask = LayerMask.GetMask( new string[] { "Player", "Box" });
+
 	}
 
 
@@ -71,16 +64,17 @@ public class Button : MonoBehaviour {
 
 			GameObject lGameObject = lCollider.transform.gameObject;
 
+			WeightBox tWeightBox = lGameObject.GetComponent<Redirect>().GetRedirect().GetComponent<WeightBox>();
 
-			if (lGameObject.GetComponent<WeightManager>() == null) continue;    //重さを持たないオブジェクトなら処理しない
+			if (tWeightBox == null) continue;    //重さを持たないオブジェクトなら処理しない
 
 			List<GameObject> tBlockList;
 			//逆転しているなら、下に接しているブロックを取得
-			if(mIsReverse) {
-				tBlockList = lGameObject.GetComponent<WeightBox>().GetPileBoxList(Vector3.down);
+			if(mDirection == CDirection.cDown) {
+				tBlockList = tWeightBox.GetPileBoxList(Vector3.down);
 			}
 			else {
-				tBlockList = lGameObject.GetComponent<WeightBox>().GetPileBoxList(Vector3.up);
+				tBlockList = tWeightBox.GetPileBoxList(Vector3.up);
 			}
 
 			foreach(var tBlock in tBlockList) {
@@ -88,7 +82,7 @@ public class Button : MonoBehaviour {
 			}
 			
 			//そのブロック自身も追加
-			lPushBlockList.Add(lGameObject);
+			lPushBlockList.Add(tWeightBox.gameObject);
 		}
 
 		//ブロックの重複をなくす
@@ -101,7 +95,7 @@ public class Button : MonoBehaviour {
 		foreach(var tBlock in lPushBlockDistinctList) {
 			
 			//逆転しているなら、上向きの力を取得する
-			if(mIsReverse) {
+			if(mDirection == CDirection.cDown) {
 				lTotalWeight += BlockSpeed.GetUpForce(tBlock.GetComponent<WeightManager>().WeightLv, tBlock.GetComponent<BlockMove>().mEnviroment);
 			}
 			else {
@@ -125,60 +119,120 @@ public class Button : MonoBehaviour {
 			mPushRate -= Time.deltaTime * (1.0f / mReleaseTakeTime);
 		}
 
-		mPushRate = Mathf.Clamp01(mPushRate);	//mPushRateは0.0f~1.0f
+		mPushRate = Mathf.Clamp01(mPushRate);   //mPushRateは0.0f~1.0f
+
+
+		
+		bool lNowButtonOn;
+		//押されている割合が1.0以上なら
+		if (mPushRate >= 1.0f) {
+			lNowButtonOn = true;	//現在押されている
+		}
+		else {
+			lNowButtonOn = false;
+		}
+
+		//前は押されていなくて、現在押されているなら
+		if (!mIsButtonOn) {
+			if(lNowButtonOn) {
+				//ボタンが押された瞬間の処理
+				Debug.Log("ButtonOn", this);
+			}
+		}
+
+		//前は押されていて、現在押されていないなら
+		if (mIsButtonOn) {
+			if (!lNowButtonOn) {
+				//ボタンが離された瞬間の処理
+				Debug.Log("ButtonOff", this);
+			}
+		}
+
+		mIsButtonOn = lNowButtonOn;	//現在の状態を上書き
 	}
 
 
 	//Ledgeを移動させる
 	void MoveLedge() {
 		//今は単なる線形補間
-		transform.Find("Ledge").localPosition = Vector3.Lerp(mLedgeMoveStart, mLedgeMoveEnd, mPushRate);
+		transform.Find("Ledge").localPosition = Vector3.Lerp(mLedgeMoveStart, mLedgeMoveStart + mLedgeMoveDelta, mPushRate);
 	}
 
 
 	//デバッグ表示
 	void DrawDebug(int aTotalWeight) {
 
-		GameObject lDebugText = transform.Find("Debug/TotalWeightText").gameObject;
-		lDebugText.GetComponent<TextMesh>().text = aTotalWeight.ToString() + "/" + mOnWeight.ToString();
+		if(mDebugObject) {
+			GameObject lDebugText = mDebugObject.transform.Find("TotalWeightText").gameObject;
+			lDebugText.GetComponent<TextMesh>().text = aTotalWeight.ToString() + "/" + mOnWeight.ToString();
 
-		if (IsButtonOn()) {
-			lDebugText.GetComponent<TextMesh>().color = Color.blue;
+			if (IsButtonOn())
+			{
+				lDebugText.GetComponent<TextMesh>().color = Color.blue;
+			}
+			else
+			{
+				lDebugText.GetComponent<TextMesh>().color = Color.white;
+			}
+			lDebugText.transform.rotation = Quaternion.identity;
 		}
-		else {
-			lDebugText.GetComponent<TextMesh>().color = Color.white;
-		}
-		lDebugText.transform.rotation = Quaternion.identity;
 	}
 
 
 	//ボタンがONかどうか
 	public bool IsButtonOn() {
-		if (mPushRate >= 1.0f) return true;	//押されている割合が1.0以上なら、ON
-		return false;
+		return mIsButtonOn;
+	}
+
+	private void OnValidate()
+	{
+		switch(mDirection) {
+			case CDirection.cUp:
+				transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+				break;
+			case CDirection.cDown:
+				transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
+				break;
+			case CDirection.cRight:
+				transform.rotation = Quaternion.Euler(0.0f, 0.0f, 270.0f);
+				break;
+			case CDirection.cLeft:
+				transform.rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+				break;
+		}
 	}
 
 
+	[SerializeField, Tooltip("押されるのにかかる時間")]
+	float mPushTakeTime;
 
-	[SerializeField]
-	float mPushTakeTime;    //押されるのにかかる時間
+	[SerializeField, Tooltip("離されるのにかかる時間")]
+	float mReleaseTakeTime;
 
-	[SerializeField]
-	float mReleaseTakeTime;    //離されるのにかかる時間
+	[SerializeField, Tooltip("押されるのに必要な重さ")]
+	int mOnWeight;
 
-	[SerializeField]
-	int mOnWeight;    //押されるのに必要な重さ
-
-	bool mIsReverse;    //逆向きのスイッチかどうか
+	enum CDirection {
+		cUp,
+		cDown,
+		cRight,
+		cLeft
+	}
+	[SerializeField, Tooltip("スイッチの方向")]
+	CDirection mDirection;
 
 
 	float mPushRate;    //現在押されている割合
 	bool mIsPush;    //このフレームで押されているか
 
+	bool mIsButtonOn = false;	//ボタンが完全に押されているか
+
 	Vector3 mLedgeMoveStart;	//でっぱりの最初の位置
-	Vector3 mLedgeMoveEnd;  //でっぱりが完全に押されたときの位置
+	Vector3 mLedgeMoveDelta;  //でっぱりが完全に押されたときの移動量
 
 	BoxCollider mWeightCheckCollider;   //押されているオブジェクトを見つけるときに使うコライダー
-	int mLayerMask;	//押されているオブジェクトを見つけるときのレイヤーマスク
-	
+	int mLayerMask; //押されているオブジェクトを見つけるときのレイヤーマスク
+
+	[SerializeField]
+	GameObject mDebugObject;
 }
