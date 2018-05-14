@@ -61,7 +61,7 @@ public class PlayerColor : MonoBehaviour {
 
 
 		//重さに応じて色を変更
-		ChangeColor(mWeightManager.WeightLv);
+		ChangeColor(mWeightManager.SeemWeightLv);
 	}
 
 	// Update is called once per frame
@@ -69,12 +69,11 @@ public class PlayerColor : MonoBehaviour {
 	{
 
 		//前のフレームから重さが変わっていたら
-		if (mBeforeWeight != mWeightManager.WeightLv)
+		if (mBeforeWeight != mWeightManager.SeemWeightLv)
 		{
 			//重さに応じて色を変更
-			ChangeColor(mWeightManager.WeightLv);
+			ChangeColor(mWeightManager.SeemWeightLv);
 		}
-
 	}
 
 

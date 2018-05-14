@@ -15,26 +15,39 @@ public class WeightManager : MonoBehaviour {
 	
 	// 重さレベル
 	[SerializeField] Weight weightLv = WeightDefLv;
-	public Weight WeightLv { get { return weightLv; } set { weightLv = value; } }
+	public Weight WeightLv { get { return weightLv; } set {
+			weightLv = value;
+			seemWeightLv = weightLv;
+		} }
+
+	//見かけの重さレベル
+	Weight seemWeightLv;
+	public Weight SeemWeightLv { get { return seemWeightLv; } set { seemWeightLv = value; } }
 
 	// 重さレベルによる上下動値
 	[SerializeField] List<Vector3> weightFallVelList = new List<Vector3>();
 
-//	// 力を処理するコンポーネント
-//	ForceManager forceMng = null;
-		
+	//	// 力を処理するコンポーネント
+	//	ForceManager forceMng = null;
+
 	// Use this for initialization
-//	void Start () {
-//		// 力コンポーネント
-//		forceMng = GetComponent<ForceManager>();
-//		if (forceMng == null) {
-//
-//
-//		}
-//	}
+	//	void Start () {
+	//		// 力コンポーネント
+	//		forceMng = GetComponent<ForceManager>();
+	//		if (forceMng == null) {
+	//
+	//
+	//		}
+	//	}
 
 	// Update is called once per frame
-//	void Update() {}
+	//	void Update() {}
+
+	void Start()
+	{
+		SeemWeightLv = WeightLv;
+	}
+
 
 	// pull元からpush先へ指定数の重さレベルを移し、移す事に成功したレベル数を返す
 	public int PullWeight(WeightManager _from, int _num = 1) {

@@ -8,6 +8,15 @@ public class LightBall : MonoBehaviour {
 	Vector3 mFrom;
 	Vector3 mTo;
 
+	public Vector3 FromPoint
+	{
+		get { return mFrom; }
+	}
+	public Vector3 ToPoint
+	{
+		get { return mTo; }
+	}
+
 	[SerializeField]
 	GameObject mCollider;
 
@@ -39,28 +48,26 @@ public class LightBall : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		mFromDistance += Time.deltaTime * mMoveSpeed;
-
-		UpdatePosition();
-
-		ReachCheck();
-		HitCheck();
 	}
 
 
-	public void UpdatePoint(Vector3 aFrom, Vector3 aTo) {
-		mFrom = aFrom;
-		mTo = aTo;
+	public void UpdatePoint() {
+		
+		mFromDistance += Time.deltaTime * mMoveSpeed;
 
 		UpdatePosition();
 		ReachCheck();
 		HitCheck();
 	}
 	public void SetPoint(Vector3 aFrom, Vector3 aTo) {
+		mFrom = aFrom;
+		mTo = aTo;
+	}
+	public void InitPoint(Vector3 aFrom, Vector3 aTo) {
 		mFromDistance = 0.0f;
 		mIsHit = false;
-		mBeforePosition = aFrom;
-		UpdatePoint(aFrom, aTo);
+		transform.position = aFrom;
+		SetPoint(aFrom, aTo);
 	}
 	
 	void ReachCheck() {
@@ -78,6 +85,7 @@ public class LightBall : MonoBehaviour {
 		transform.rotation = Quaternion.FromToRotation(Vector3.right, lDir);
 
 		//距離を進む
+		mBeforePosition = transform.position;
 		transform.position = mFrom + lDir.normalized * mFromDistance;
 	}
 
@@ -92,9 +100,10 @@ public class LightBall : MonoBehaviour {
 		LayerMask l = LayerMask.GetMask(new string[] { "Box", "Stage" });
 		var rcs = Physics.SphereCastAll(aFrom, mCollider.transform.lossyScale.x / 2.0f, lDir, (aTo - aFrom).magnitude, l);
 		foreach(var rc in rcs) {
-			Debug.Log("Hit!");
 			if (aIgnoreList == null) return false;
-			if (aIgnoreList.Contains(rc.collider.gameObject) == false) return false;
+			if (aIgnoreList.Contains(rc.collider.gameObject) == false) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -103,9 +112,12 @@ public class LightBall : MonoBehaviour {
 		return ThroughShotLine(aFrom, aTo, new GameObject[] { aIgnore }.ToList());
 	}
 
-	bool HitCheck() {
-		bool res = ThroughShotLine(mBeforePosition, transform.position, mIgnoreList);
-		mBeforePosition = transform.position;
-		return !res;
+	void HitCheck() {
+		if(ThroughShotLine(mBeforePosition, transform.position, mIgnoreList)) {
+			mIsHit = false;
+		}
+		else {
+			mIsHit = true;
+		}
 	}
 }

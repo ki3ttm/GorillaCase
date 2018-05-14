@@ -2,8 +2,8 @@
 {
 	Properties
 	{
-		_Color("Color", Color) = (1,1,1,1)
-		_Width("Width", Float) = 0.4
+		[HDR]_Color("_Color", Color) = (1,1,1,1)
+		_Width("_Width", Float) = 0.4
 	}
 	SubShader
 	{
@@ -33,17 +33,19 @@
 				float4 vertex : SV_POSITION;
 			};
 
-			fixed4 _Color;
+			float4 _Color;
 			float _Width;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = v.vertex;
-				o.vertex += float4(v.normal * _Width, 0);
+				o.vertex += float4(normalize(v.normal) * _Width, 0);
 				o.vertex = UnityObjectToClipPos(o.vertex);
 				return o;
 			}
+
+
 			
 			fixed4 frag (v2f i) : SV_Target
 			{

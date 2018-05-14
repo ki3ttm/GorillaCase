@@ -83,7 +83,9 @@ MonoBehaviour:
   mModelParent: {fileID: 1728580895179610}
   mModelPrefab: {fileID: 1371945808958264, guid: 2ed2c0c6b8c9bf6409e4571b3d5a87a6,
     type: 2}
+  mDirectionModelPrefab: {fileID: 1041113757966780, guid: 0707a681094796b4f9b8e18ccb22680e,
+    type: 2}
   mInterval: 0.5
   mOffsetSpeed: 1
-  mFrom: {x: 0, y: -5, z: 0}
-  mTo: {x: 5, y: 0, z: 0}
+  mDirectionInterval: 1
+  mStartOffset: 0.5

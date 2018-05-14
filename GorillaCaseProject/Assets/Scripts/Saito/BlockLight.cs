@@ -31,18 +31,17 @@ public class BlockLight : MonoBehaviour {
 		//コンポーネントの取得
 		mWeightManager = GetComponent<WeightManager>();
 
-
 		//重さに応じて光る場所を変更
-		ChangeLight(mWeightManager.WeightLv);
+		ChangeLight(mWeightManager.SeemWeightLv);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 		//前のフレームから重さが変わっていたら
-		if(mBeforeWeight != mWeightManager.WeightLv) {
+		if(mBeforeWeight != mWeightManager.SeemWeightLv) {
 			//重さに応じて光る場所を変更
-			ChangeLight(mWeightManager.WeightLv);
+			ChangeLight(mWeightManager.SeemWeightLv);
 		}
 
 	}
@@ -58,10 +57,6 @@ public class BlockLight : MonoBehaviour {
 		mat.SetColor("_EmissionColor",emission);
 
 		mBeforeWeight = aWeight;
-
-		//mMaterialAndEmission[0].mat.EnableKeyword("_EMISSION");
-		//こういうのもあるらしいが、exeをビルドして実行するとエラーが出ることもあるらしいからやめておく。
-		//スクリプトだけでEmissionを有効にしても、UnityがEmissionを有効にしたシェーダが要らないと判断するらしい。
 	}
 
 
