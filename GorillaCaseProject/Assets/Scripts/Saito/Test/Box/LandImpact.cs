@@ -16,6 +16,12 @@ public class LandImpact : MonoBehaviour {
 	[SerializeField, Tooltip("重さ1のときに跳ねる大きさ")]
 	float mBoundMagnitude = 1.0f;
 
+	[SerializeField, Tooltip("重さ1のときに跳ねた音"), EditOnPrefab]
+	AudioClip mBoundLightSE;
+
+	[SerializeField, Tooltip("重さ2のときに落ちた音"), EditOnPrefab]
+	AudioClip mBoundHeavySE;
+
 	// Use this for initialization
 	void Start () {
 		mHighestPosition = transform.position;
@@ -56,10 +62,12 @@ public class LandImpact : MonoBehaviour {
 		if(GetComponent<WeightManager>().WeightLv == WeightManager.Weight.heavy) {
 			foreach (var c in FindObjectsOfType<CameraShake>()) {
 				c.ShakeStart(0.3f);
+				GetComponent<AudioSource>().PlayOneShot(mBoundHeavySE);
 			}
 		}
 		if (GetComponent<WeightManager>().WeightLv == WeightManager.Weight.light) {
 			GetComponent<Rigidbody>().AddForce(Vector3.up * mBoundMagnitude, ForceMode.VelocityChange);
+			GetComponent<AudioSource>().PlayOneShot(mBoundLightSE);
 		}
 	}
 

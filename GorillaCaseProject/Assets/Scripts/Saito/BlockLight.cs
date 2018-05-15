@@ -6,6 +6,15 @@ public class BlockLight : MonoBehaviour {
 
 	//色を変更するモデル
 	[SerializeField]
+	GameObject mHoverModel;
+
+	[SerializeField]
+	GameObject mLightModel;
+
+	[SerializeField]
+	GameObject mHeavyModel;
+
+	[SerializeField]
 	GameObject mLightObject;
 
 
@@ -56,6 +65,8 @@ public class BlockLight : MonoBehaviour {
 		//光らせる
 		mat.SetColor("_EmissionColor",emission);
 
+		ShowEffect(aWeight);
+
 		mBeforeWeight = aWeight;
 	}
 
@@ -71,5 +82,28 @@ public class BlockLight : MonoBehaviour {
 				return Color.red;
 		}
 		return Color.black;
+	}
+
+	void ShowEffect(WeightManager.Weight aWeight)
+	{
+		if(aWeight == WeightManager.Weight.flying) {
+			mHoverModel.SetActive(true);
+			mLightModel.SetActive(false);
+			mHeavyModel.SetActive(false);
+		}
+
+		if (aWeight == WeightManager.Weight.light)
+		{
+			mHoverModel.SetActive(false);
+			mLightModel.SetActive(true);
+			mHeavyModel.SetActive(false);
+		}
+
+		if (aWeight == WeightManager.Weight.heavy)
+		{
+			mHoverModel.SetActive(false);
+			mLightModel.SetActive(false);
+			mHeavyModel.SetActive(true);
+		}
 	}
 }

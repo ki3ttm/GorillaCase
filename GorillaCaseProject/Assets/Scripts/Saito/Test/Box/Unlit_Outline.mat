@@ -23,6 +23,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Width: 0.3
+    - _Width: 0.1
     m_Colors:
     - _Color: {r: 0.5484968, g: 0.70640105, b: 2.696, a: 1}

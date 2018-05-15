@@ -218,7 +218,7 @@ public class Button : MonoBehaviour {
 		cRight,
 		cLeft
 	}
-	[SerializeField, Tooltip("スイッチの方向")]
+	[SerializeField, Tooltip("スイッチの方向"), InstanceOverride]
 	CDirection mDirection;
 
 
