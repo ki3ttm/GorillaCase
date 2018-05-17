@@ -18,7 +18,7 @@ public class SaitoButtonTest : MonoBehaviour {
 		int lTotal = 0;
 		foreach(var lButton in mButtonList) {
 			if (lButton.GetComponent<Button>() == null) continue;
-			if(lButton.GetComponent<Button>().IsButtonOn() == true) {
+			if(lButton.GetComponent<Button>().IsButtonOn == true) {
 				lTotal += 1;
 			}
 		}
