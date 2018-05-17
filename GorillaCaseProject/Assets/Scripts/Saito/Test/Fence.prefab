@@ -124,7 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mDirection: 0
   mWidth: 0
-  mLeftModel: {fileID: 1113984090862642, guid: 37108830a2b06fb4d893c0b3482e1cb3, type: 2}
-  mRightModel: {fileID: 1112546397248676, guid: ee6d7971721231446a91ae18610414cf,
+  mLeftModel: {fileID: 1805486152142872, guid: 564a8f8d5aa80524db4f42fb53f6fea0, type: 2}
+  mRightModel: {fileID: 1805486152142872, guid: 564a8f8d5aa80524db4f42fb53f6fea0,
     type: 2}
-  mMidModel: {fileID: 1061124251902092, guid: 6f1f9817d7e93b9438c615d4a23e2f68, type: 2}
+  mMidModel: {fileID: 1805486152142872, guid: 564a8f8d5aa80524db4f42fb53f6fea0, type: 2}

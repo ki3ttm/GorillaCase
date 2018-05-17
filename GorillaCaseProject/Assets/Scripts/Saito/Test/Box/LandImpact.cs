@@ -17,10 +17,10 @@ public class LandImpact : MonoBehaviour {
 	float mBoundMagnitude = 1.0f;
 
 	[SerializeField, Tooltip("重さ1のときに跳ねた音"), EditOnPrefab]
-	AudioClip mBoundLightSE;
+	GameObject mBoundLightSE;
 
 	[SerializeField, Tooltip("重さ2のときに落ちた音"), EditOnPrefab]
-	AudioClip mBoundHeavySE;
+	GameObject mBoundHeavySE;
 
 	// Use this for initialization
 	void Start () {
@@ -62,12 +62,13 @@ public class LandImpact : MonoBehaviour {
 		if(GetComponent<WeightManager>().WeightLv == WeightManager.Weight.heavy) {
 			foreach (var c in FindObjectsOfType<CameraShake>()) {
 				c.ShakeStart(0.3f);
-				GetComponent<AudioSource>().PlayOneShot(mBoundHeavySE);
+				FindObjectOfType<SoundManager>().Play(mBoundHeavySE);
 			}
 		}
 		if (GetComponent<WeightManager>().WeightLv == WeightManager.Weight.light) {
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
 			GetComponent<Rigidbody>().AddForce(Vector3.up * mBoundMagnitude, ForceMode.VelocityChange);
-			GetComponent<AudioSource>().PlayOneShot(mBoundLightSE);
+			FindObjectOfType<SoundManager>().Play(mBoundLightSE);
 		}
 	}
 

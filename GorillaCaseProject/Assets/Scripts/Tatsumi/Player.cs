@@ -97,7 +97,7 @@ public class Player : MonoBehaviour {
 		// 回転
 		Rotate();
 
-		jumpInput = Input.GetKeyDown(KeyCode.Space);
+		jumpInput = Input.GetButtonDown("Jump");
 		Jump();
 	}
 
@@ -105,7 +105,15 @@ public class Player : MonoBehaviour {
 		// 移動不可時は処理しない
 		if (!MoveFlg) return;
 
-		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * Input.GetAxis("Horizontal") * walkSpd * Time.deltaTime * 60.0f));
+		float lMoveInput;
+		if(!MassShifter.IsJoystickConnect()) {
+			lMoveInput = Input.GetAxis("Horizontal");
+		}
+		else {
+			lMoveInput = Input.GetAxis("JoyHorizontal");
+		}
+
+		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * lMoveInput * walkSpd * Time.deltaTime * 60.0f));
 		//transform.position += (Vector3.right * Input.GetAxis("Horizontal") * walkSpd);
 	}
 
@@ -148,15 +156,15 @@ public class Player : MonoBehaviour {
 		switch (weightMng.WeightLv) {
 		case WeightManager.Weight.flying:
 			// 接地方向と逆方向にジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f), ForceMode.Impulse);
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, revJumpFirstSpd, 0.0f), ForceMode.VelocityChange);
 			break;
 		case WeightManager.Weight.light:
 			// 接地方向と逆方向にジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f), ForceMode.Impulse);
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, jumpFirstSpd, 0.0f), ForceMode.VelocityChange);
 			break;
 		case WeightManager.Weight.heavy:
 			// 接地方向と逆方向に小ジャンプ
-			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, heavyJumpFirstSpd, 0.0f), ForceMode.Impulse);
+			GetComponent<Rigidbody>().AddForce(new Vector3(0.0f, heavyJumpFirstSpd, 0.0f), ForceMode.VelocityChange);
 			break;
 		default:
 			break;

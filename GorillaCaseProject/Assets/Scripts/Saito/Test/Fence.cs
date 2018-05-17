@@ -59,9 +59,7 @@ public class Fence : MonoBehaviour {
 
 		var m = transform.Find("Model");
 
-		while(m.childCount != 0)
-		{
-			Debug.Log(m.GetChild(0).gameObject);
+		while(m.childCount != 0) {
 			DestroyImmediate(m.GetChild(0).gameObject);
 		}
 

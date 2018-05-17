@@ -85,6 +85,18 @@ public class BlockMove : MonoBehaviour {
 			//軽さに応じた加速度を取得
 			Vector3 lAccel = mBlockSpeed.GetAccel(lSubstanceWeight, mEnviroment);
 
+			/*
+			var p = GetComponent<Player>();
+			if(p) {
+				if(p.JumpFlg) {
+					//重力と落ちる方向が同じなら
+					if(GetComponent<Rigidbody>().velocity.y * lAccel.y > 0.0f){
+						lAccel.y *= 2.0f;
+					}
+				}
+			}
+			*/
+
 			//横方向に移動しない
 			foreach (var lBody in mAllBody)
 			{
@@ -99,10 +111,10 @@ public class BlockMove : MonoBehaviour {
 				lBody.AddForce(lAccel, ForceMode.Acceleration);
 
 				if(lMaxSpeed >= 0.0f) {
-					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, -lMaxSpeed, lMaxSpeed), 0.0f);
+					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, -float.PositiveInfinity, lMaxSpeed), 0.0f);
 				}
 				else {
-					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, lMaxSpeed, -lMaxSpeed), 0.0f);
+					lBody.velocity = new Vector3(0.0f, Mathf.Clamp(lBody.velocity.y, lMaxSpeed, float.PositiveInfinity), 0.0f);
 				}
 			}
 		}

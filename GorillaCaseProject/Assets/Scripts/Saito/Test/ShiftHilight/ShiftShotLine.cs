@@ -21,12 +21,10 @@ public class ShiftShotLine : MonoBehaviour {
 	[SerializeField, Tooltip("点線が動く速度"), EditOnPrefab]
 	float mOffsetSpeed;
 
-	[SerializeField, Tooltip("何個おきに矢印を出すか")]
-	int mDirectionInterval = 1;
-
 	[SerializeField, Tooltip("矢印を出し始めたりする位置"), EditOnPrefab]
 	float mStartOffset;
 
+	bool mIsThrough;
 
 	// Use this for initialization
 	void Start () {
@@ -37,16 +35,21 @@ public class ShiftShotLine : MonoBehaviour {
 	void Update () {
 
 		//オフセットを増やす→点線を移動させる
-		mOffset += Time.deltaTime * mOffsetSpeed;
-		mOffset = mOffset % (mInterval * mDirectionInterval);
+		if(mIsThrough) {
+			mOffset += Time.deltaTime * mOffsetSpeed;
+		}
+		mOffset = mOffset % (mInterval);
+
 
 		ReplaceModel();
 
 		ChangeColor();
 	}
 
-	public void SetColor(Color aColor) {
+	public void SetColor(Color aColor, bool aIsThrough) {
 		mColor = aColor;
+		mIsThrough = aIsThrough;
+
 	}
 	void ChangeColor() {
 		for (int i = mModelParent.transform.childCount - 1; i >= 0; i--) {
@@ -61,27 +64,36 @@ public class ShiftShotLine : MonoBehaviour {
 		ReplaceModel();
 	}
 	public void ReplaceModel() {
-		//ゲームオブジェクトを移動する
-		for (int i = mModelParent.transform.childCount - 1; i >= 0; i--)
-		{
-			Destroy(mModelParent.transform.GetChild(i).gameObject);
-		}
 
 		Vector3 lDir = mTo - mFrom;
-		
-		float lOffset = mOffset % mInterval;
-		for(int i = 0; ; i++) {
-			float lNowDist = i * mInterval + lOffset + mStartOffset;
+
+		int lModelNum = 0;
+		for (int i = 0; ; i++) {
+
+			float lNowDist = i * mInterval + mOffset + mStartOffset;
+			if (lNowDist >= lDir.magnitude - mStartOffset) {
+				lModelNum = i;
+				break;
+			}
+		}
+
+
+		//ゲームオブジェクトを移動する
+		for (int i = mModelParent.transform.childCount - 1; i >= lModelNum; i--) {
+			DestroyImmediate(mModelParent.transform.GetChild(i).gameObject);
+		}
+		for (int i = mModelParent.transform.childCount; i < lModelNum; i++) {
+			Instantiate(mDirectionModelPrefab, mModelParent.transform);
+		}
+
+
+		for (int i = 0; ; i++) {
+			float lNowDist = i * mInterval + mOffset + mStartOffset;
 			if (lNowDist >= lDir.magnitude - mStartOffset) break;
-			GameObject g;
+
+			GameObject g = mModelParent.transform.GetChild(i).gameObject;
 
 			int lDirectionIndex = (int)(mOffset / mInterval);
-			if (i % mDirectionInterval == lDirectionIndex) {
-				g = Instantiate(mDirectionModelPrefab, mModelParent.transform);
-			}
-			else {
-				g = Instantiate(mModelPrefab, mModelParent.transform);
-			}
 			g.transform.position = mFrom + lDir.normalized * lNowDist;
 			g.transform.rotation = Quaternion.FromToRotation(Vector3.right, lDir);
 		}

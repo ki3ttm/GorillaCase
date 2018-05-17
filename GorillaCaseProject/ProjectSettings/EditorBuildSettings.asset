@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Saito/Stage1-1.unity
+    guid: 152f3a4f846cd2e4b81098198f3e5aeb
+  - enabled: 1
     path: Assets/Scenes/Tatsumi/StagePlan.unity
     guid: c46b8008871c1d94f967c6ff414df34d
   - enabled: 1

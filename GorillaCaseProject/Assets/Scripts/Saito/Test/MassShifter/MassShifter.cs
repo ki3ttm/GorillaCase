@@ -27,8 +27,8 @@ public class MassShifter : MonoBehaviour {
 	}
 
 
-	void UpdateState()
-	{
+	void UpdateState() {
+
 		switch(mState) {
 			case CSelectState.cNormal:
 				UpdateNormal();
@@ -61,8 +61,8 @@ public class MassShifter : MonoBehaviour {
 		mInitState = true;
 	}
 
-	void UpdateNormal()
-	{
+	void UpdateNormal() {
+
 		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(false);
@@ -84,28 +84,25 @@ public class MassShifter : MonoBehaviour {
 
 		UpdateModelHilight();
 
-		if (Input.GetKeyDown(KeyCode.Mouse0)) {
+		if (GetShiftButton()) {
 
-			if(CanShiftSource(mSelect))
-			{
+			if(CanShiftSource(mSelect)) {
 				mSource = mSelect;
 				ChangeState(CSelectState.cClick);
 			}
-			else
-			{
+			else {
 				if(mSelect) {
 					mSelect.GetComponent<Animator>().Play("BoxCantShift", 0);
-					GetComponent<AudioSource>().PlayOneShot(mCantShiftSE);
+					FindObjectOfType<SoundManager>().Play(mCantShiftSE);
 				}
 				ChangeState(CSelectState.cFail);
 			}
 		}
 	}
 
-	void UpdateDrag()
-	{
-		if (mInitState == true)
-		{
+	void UpdateDrag() {
+
+		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(true);
 			mLightBall.SetActive(false);
@@ -128,16 +125,15 @@ public class MassShifter : MonoBehaviour {
 		
 
 		//左クリックされなくなると
-		if (!Input.GetKey(KeyCode.Mouse0)) {
+		if (!GetShiftButton()) {
 			if (CanShift(mSource, mSelect)) {
 				mDest = mSelect;
 				ChangeState(CSelectState.cMoveSourceToDest);
 			}
 			else {
-				if (mSelect)
-				{
+				if (mSelect) {
 					mSelect.GetComponent<Animator>().Play("BoxCantShift", 0);
-					GetComponent<AudioSource>().PlayOneShot(mCantShiftSE);
+					FindObjectOfType<SoundManager>().Play(mCantShiftSE);
 				}
 				ChangeState(CSelectState.cFail);
 			}
@@ -159,7 +155,7 @@ public class MassShifter : MonoBehaviour {
 
 			mLightBall.GetComponent<LightBall>().InitPoint(mSource.transform.position, mDest.transform.position);
 
-			GetComponent<AudioSource>().PlayOneShot(mShiftSourceSE);
+			FindObjectOfType<SoundManager>().Play(mShiftSourceSE);
 
 			mSource.GetComponent<WeightManager>().SeemWeightLv -= 1;
 		}
@@ -173,7 +169,7 @@ public class MassShifter : MonoBehaviour {
 
 		if(lLightBall.IsReached) {
 			ChangeState(CSelectState.cSuccess);
-			GetComponent<AudioSource>().PlayOneShot(mShiftDestSE);
+			FindObjectOfType<SoundManager>().Play(mShiftDestSE);
 		}
 		
 		if(lLightBall.IsHit) {
@@ -219,7 +215,7 @@ public class MassShifter : MonoBehaviour {
 
 			mLightBall.GetComponent<LightBall>().InitPoint(mLightBall.transform.position, mSource.transform.position);
 
-			GetComponent<AudioSource>().PlayOneShot(mCancelShiftSE);
+			FindObjectOfType<SoundManager>().Play(mCancelShiftSE);
 		}
 
 		mLightBall.GetComponent<LightBall>().SetPoint(mLightBall.GetComponent<LightBall>().FromPoint, mSource.transform.position);
@@ -245,7 +241,7 @@ public class MassShifter : MonoBehaviour {
 		}
 
 		//押されていないなら
-		if (Input.GetKey(KeyCode.Mouse0) == false) {
+		if (GetShiftButton() == false) {
 			ChangeState(CSelectState.cNormal);
 		}
 	}
@@ -371,7 +367,7 @@ public class MassShifter : MonoBehaviour {
 		}
 
 		//右クリックが押されると
-		if (Input.GetKey(KeyCode.Mouse1)) {
+		if (GetDoubleShiftButton()) {
 			if (mSource.GetComponent<WeightManager>().WeightLv == WeightManager.Weight.heavy) {
 				mSelectDouble = true;
 			}
@@ -381,14 +377,63 @@ public class MassShifter : MonoBehaviour {
 			mSelectDouble = false;
 		}
 
-		//左クリックがされなくなると
-		if (!Input.GetKey(KeyCode.Mouse0))
-		{
+		//移すボタンが押されなくなると
+		if (!GetShiftButton()) {
 			ChangeState(CSelectState.cFail);
 		}
 	}
 	
+	bool GetShiftButton() {
+
+		if(IsJoystickConnect()) {
+			return Input.GetAxis("JoyShift") >= mShiftOnValue;
+		}
+		return Input.GetKey(KeyCode.Mouse0);
+	}
+	bool GetDoubleShiftButton(){
+		return Input.GetKey(KeyCode.Mouse1);
+	}
+
+	float GetShiftXAxis() {
+		if (IsJoystickConnect()) {
+			return Input.GetAxis("JoyShiftHorizontal");
+		}
+		else {
+			if (Input.GetKey(KeyCode.J)) return -1.0f;
+			if (Input.GetKey(KeyCode.L)) return 1.0f;
+		}
+		return 0.0f;
+	}
+	float GetShiftYAxis() {
+		if (IsJoystickConnect()) {
+			return Input.GetAxis("JoyShiftVertical");
+		}
+		else {
+			if (Input.GetKey(KeyCode.I)) return 1.0f;
+			if (Input.GetKey(KeyCode.K)) return -1.0f;
+		}
+		return 0.0f;
+	}
+
+	public static bool IsJoystickConnect() {
+		foreach (var j in Input.GetJoystickNames()) {
+			if(j != "") {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	void FollowMousePosition() {
+
+		//ジョイスティックが接続されていたら
+		if (IsJoystickConnect()) {
+			MoveCursorByJoistick();
+			return;
+		}
+
+
 		//		targetPoint.position = Camera.main.ScreenToWorldPoint(Input.mousePosition + new Vector3(0.0f, 0.0f, -Camera.main.transform.position.z));	
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		//		Debug.DrawRay(ray.origin, ray.direction);
@@ -402,18 +447,45 @@ public class MassShifter : MonoBehaviour {
 		}
 	}
 
+	[SerializeField]
+	float mCursorMoveXSpeed = 10.0f;
+
+	[SerializeField]
+	float mCursorMoveYSpeed = 10.0f;
+
+	[SerializeField]
+	float mShiftOnValue = 0.8f;
+
+	void MoveCursorByJoistick() {
+
+		Vector3 lMoveDelta = new Vector3();
+		lMoveDelta.x = GetShiftXAxis() * Time.deltaTime * mCursorMoveXSpeed;
+		lMoveDelta.y = GetShiftYAxis() * Time.deltaTime * mCursorMoveYSpeed;
+
+
+		//移動先の座標が画面内に収まっているかの判定
+		Vector3 lNewPosition = mCursor.transform.position + lMoveDelta;
+	
+		Vector3 lNewPositionInScreen = Camera.main.WorldToViewportPoint(lNewPosition);
+		if(-1.0f <= lNewPositionInScreen.x && lNewPositionInScreen.x <= 1.0f) {
+			if (-1.0f <= lNewPositionInScreen.y && lNewPositionInScreen.y <= 1.0f) {
+				mCursor.transform.position = lNewPosition;
+			}
+		}
+	}
+
 	void UpdateShotLine(GameObject aShotLine, GameObject aFrom, GameObject aTo) {
 
 		aShotLine.GetComponent<ShiftShotLine>().SetLinePosition(aFrom.transform.position, aTo.transform.position);
 
 		if (mLightBall.GetComponent<LightBall>().ThroughShotLine(aFrom.transform.position, aTo.transform.position, new GameObject[] { mSource, mDest, mSelect }.ToList()))
 		{
-			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.green);
+			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.green, true);
 			ChangeCursorColor(Color.green);
 		}
 		else
 		{
-			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.red);
+			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.red, false);
 			ChangeCursorColor(Color.red);
 		}
 	}
@@ -511,14 +583,14 @@ public class MassShifter : MonoBehaviour {
 	}
 
 	[SerializeField]
-	AudioClip mCantShiftSE;
+	GameObject mCantShiftSE;
 
 	[SerializeField]
-	AudioClip mCancelShiftSE;
+	GameObject mCancelShiftSE;
 
 	[SerializeField]
-	AudioClip mShiftSourceSE;
+	GameObject mShiftSourceSE;
 
 	[SerializeField]
-	AudioClip mShiftDestSE;
+	GameObject mShiftDestSE;
 }

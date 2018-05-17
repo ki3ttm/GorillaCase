@@ -117,7 +117,7 @@ Transform:
   m_GameObject: {fileID: 1103948260619102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 4594484485505678}
   m_RootOrder: 1
@@ -322,7 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mCollider: {fileID: 1103948260619102}
   mIgnoreList: []
-  mMoveSpeed: 10
+  mMoveSpeed: 20
 --- !u!135 &135218117600140480
 SphereCollider:
   m_ObjectHideFlags: 1

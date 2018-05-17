@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 114870849296702168}
   - component: {fileID: 95300316100070416}
   - component: {fileID: 114134566444511448}
-  - component: {fileID: 82077719694927592}
   m_Layer: 9
   m_Name: WeightBox
   m_TagString: WeightObject
@@ -1227,86 +1226,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!82 &82077719694927592
-AudioSource:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1095992925272346}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
 --- !u!95 &95300316100070416
 Animator:
   serializedVersion: 3
@@ -1388,9 +1307,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mLandCollider: {fileID: 1862957032044990}
   mImpactDistance: 1
-  mBoundMagnitude: 20
-  mBoundLightSE: {fileID: 8300000, guid: 35a5c296a4c0dc945b1706f50edcef2b, type: 3}
-  mBoundHeavySE: {fileID: 8300000, guid: 6324f53ff86fa7247adc65c3dc5427d9, type: 3}
+  mBoundMagnitude: 10
+  mBoundLightSE: {fileID: 1091391208803622, guid: 3d4802ac25da86145ad8f02d5b8c7eff,
+    type: 2}
+  mBoundHeavySE: {fileID: 1847099955247788, guid: 2b2ae8c8e307a904690a3ee0fd027ce0,
+    type: 2}
 --- !u!114 &114222813482174190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1434,8 +1355,7 @@ MonoBehaviour:
   mLightModel: {fileID: 1653884939186436}
   mHeavyModel: {fileID: 1747986067869880}
   mLightObject: {fileID: 1344407431695202}
-  mat: {fileID: 0}
-  emission: {r: 0, g: 1, b: 0, a: 1}
+  mIsBlock: 1
 --- !u!114 &114606042104698248
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1486,15 +1406,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b575058e0a2c9348ba5b21401d4668c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mMaxSpeedInAir_Heavy: -4
-  mMaxSpeedInAir_Light: -2
-  mMaxSpeedInAir_Hover: 2
+  mMaxSpeedInAir_Heavy: -10
+  mMaxSpeedInAir_Light: -10
+  mMaxSpeedInAir_Hover: 10
   mMaxSpeedInWater_Heavy: -2
   mMaxSpeedInWater_Light: 2
   mMaxSpeedInWater_Hover: 2
   mMaxSpeedSecondInAir_Heavy: 2
-  mMaxSpeedSecondInAir_Light: 1
-  mMaxSpeedSecondInAir_Hover: 4
+  mMaxSpeedSecondInAir_Light: 2
+  mMaxSpeedSecondInAir_Hover: 2
   mMaxSpeedSecondInWater_Heavy: 2
   mMaxSpeedSecondInWater_Light: 2
   mMaxSpeedSecondInWater_Hover: 2

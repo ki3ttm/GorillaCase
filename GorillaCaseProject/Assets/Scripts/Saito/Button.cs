@@ -125,7 +125,7 @@ public class Button : MonoBehaviour {
 		
 		bool lNowButtonOn;
 		//押されている割合が1.0以上なら
-		if (mPushRate >= 1.0f) {
+		if (mPushRate >= 0.5f) {
 			lNowButtonOn = true;	//現在押されている
 		}
 		else {

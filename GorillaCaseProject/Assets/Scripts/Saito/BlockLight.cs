@@ -17,10 +17,13 @@ public class BlockLight : MonoBehaviour {
 	[SerializeField]
 	GameObject mLightObject;
 
+	[SerializeField]
+	bool mIsBlock = true;
+
 
 	//色を変更するマテリアル
-	public Material mat;
-	public Color emission;
+	Material mat;
+	Color emission;
 
 
 	//重さを管理しているコンポーネントへの参照
@@ -35,7 +38,11 @@ public class BlockLight : MonoBehaviour {
 		//マテリアルの取得
 		var lRenderer = mLightObject.GetComponent<Renderer>();
 
-		mat = lRenderer.materials[1];
+		mat = null;
+		if(mIsBlock) {
+			mat = lRenderer.materials[1];
+		}
+		
 
 		//コンポーネントの取得
 		mWeightManager = GetComponent<WeightManager>();
@@ -63,7 +70,10 @@ public class BlockLight : MonoBehaviour {
 		emission = GetColor(aWeight);
 
 		//光らせる
-		mat.SetColor("_EmissionColor",emission);
+		if(mat != null) {
+			mat.SetColor("_EmissionColor", emission);
+		}
+		
 
 		ShowEffect(aWeight);
 

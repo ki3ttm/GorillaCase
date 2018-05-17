@@ -33,8 +33,7 @@ public class Lift : MonoBehaviour {
 	}
     void LiftUpDown()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
+        if (Input.GetButtonDown("Lift")) {
 //            Debug.Log("LSDOWN");
 
             if (liftObj == null)
