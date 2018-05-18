@@ -145,7 +145,7 @@ public class MassShifter : MonoBehaviour {
 	{
 		if(mInitState == true) {
 			mInitState = false;
-			mShotLineSourceToDest.SetActive(true);
+			mShotLineSourceToDest.SetActive(false);
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mDest, true, mDestColor);
 			mLightBall.SetActive(true);
