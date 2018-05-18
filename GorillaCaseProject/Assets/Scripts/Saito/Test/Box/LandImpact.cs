@@ -43,13 +43,20 @@ public class LandImpact : MonoBehaviour {
 
 		bool lIsLanding = IsLanding();
 
+
 		//このフレームに接地し始めていて
-		if (mBeforeLanding == false && lIsLanding == true)
-		{
+		if (mBeforeLanding == false && lIsLanding == true) {
 
 			//一定距離以上落ちていたら
-			if (mHighestPosition.y - transform.position.y >= mImpactDistance)
-			{
+			if (mHighestPosition.y - transform.position.y >= mImpactDistance) {
+
+				var p = GetComponent<Player>();
+				if (p != null) {
+					if(p.isJumping) {
+						return;
+					}
+				}
+
 				OnLanding();
 			}
 		}
@@ -67,7 +74,7 @@ public class LandImpact : MonoBehaviour {
 		}
 		if (GetComponent<WeightManager>().WeightLv == WeightManager.Weight.light) {
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
-			GetComponent<Rigidbody>().AddForce(Vector3.up * mBoundMagnitude, ForceMode.VelocityChange);
+			//GetComponent<Rigidbody>().AddForce(Vector3.up * mBoundMagnitude, ForceMode.VelocityChange);
 			FindObjectOfType<SoundManager>().Play(mBoundLightSE);
 		}
 	}

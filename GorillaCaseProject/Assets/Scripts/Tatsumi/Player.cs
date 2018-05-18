@@ -32,13 +32,11 @@ public class Player : MonoBehaviour {
 	Vector3 prevPos = Vector3.zero;					// 前回位置
 	Vector3 rotVec = new Vector3(1.0f, 1.0f, 0.0f); // 向き
 
-	[SerializeField, SaitoTest_Disable]
-	bool jumpFlag = false;
-
-	[SerializeField, SaitoTest_Disable]
-	float jumpTime = 10.0f;
+	[SaitoTest_Disable]
+	public bool isJumping = false;
 
 	bool jumpInput = false;
+	float jumpTime = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -89,7 +87,7 @@ public class Player : MonoBehaviour {
 //		if (Input.GetKeyDown("4")) GetComponent<ForceManager>().AddForce(new Vector3(1000, 1000, 0));
 
 		// 移動
-		Move();
+		//Move();
 
 		// ショット
 		//Shot();
@@ -97,8 +95,7 @@ public class Player : MonoBehaviour {
 		// 回転
 		Rotate();
 
-		jumpInput = Input.GetButtonDown("Jump");
-		Jump();
+		jumpInput |= Input.GetButtonDown("Jump");
 	}
 
 	void Move() {
@@ -113,26 +110,50 @@ public class Player : MonoBehaviour {
 			lMoveInput = Input.GetAxis("JoyHorizontal");
 		}
 
-		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * lMoveInput * walkSpd * Time.deltaTime * 60.0f));
+		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * lMoveInput * walkSpd * Time.fixedDeltaTime));
 		//transform.position += (Vector3.right * Input.GetAxis("Horizontal") * walkSpd);
 	}
 
 	void Jump() {
 
-		//ジャンプ中なら
-		if(jumpFlag) {
-			jumpTime += Time.deltaTime;
-			if(jumpTime >= 0.1f) {
-				jumpFlag = false;
+		bool lJumpInput = jumpInput;
+		jumpInput = false;
+
+		bool lIsLanding = true;
+
+		// 接地判定コライダーが接地していなければ
+		if (Physics.OverlapBox(landingCol.position, landingCol.lossyScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "Stage", "Box" })).Length <= 0) {
+
+			// 水上ジャンプ判定
+			if (!((weightMng.WeightLv == WeightManager.Weight.light) && (Physics.OverlapBox(landingCol.position, landingCol.lossyScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "WaterJump" })).Length > 0))) {
+				lIsLanding = false;
 			}
 		}
-		if(jumpFlag == true) {
+
+		if(lIsLanding) {
+			Vector3 lNewVel = GetComponent<Rigidbody>().velocity;
+			lNewVel.y = 0.0f;
+			GetComponent<Rigidbody>().velocity = lNewVel;
+		}
+
+		//ジャンプ中なら
+		if (isJumping) {
+			jumpTime += Time.fixedDeltaTime;
+			if(jumpTime < 0.2f) {
+				return;
+			}
+
+			if(lIsLanding) {
+				isJumping = false;
+			}
+		}
+		if (lIsLanding == false || isJumping == true) {
 			return;	//ジャンプ中なら処理しない
 		}
 
 
 		// 入力時以外は処理しない
-		if (!jumpInput) return;
+		if (!lJumpInput) return;
 
 		// ジャンプ不可時は処理しない
 		if (!JumpFlg) return;
@@ -143,14 +164,6 @@ public class Player : MonoBehaviour {
 			return;
 		}
 
-		// 接地判定コライダーが接地していなければ
-		if (Physics.OverlapBox(landingCol.position, landingCol.localScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "Stage", "Box" })).Length <= 0) {
-			// 水上ジャンプ判定
-			if (!((weightMng.WeightLv == WeightManager.Weight.light) && (Physics.OverlapBox(landingCol.position, landingCol.localScale / 2, landingCol.rotation, LayerMask.GetMask(new string[] { "WaterJump" })).Length > 0))) {
-				Debug.Log("非接地時にジャンプしようとしました。\n" + MessageLog.GetNameAndPos(gameObject));
-				return;
-			}
-		}
 
 		// 重さによって挙動が変化
 		switch (weightMng.WeightLv) {
@@ -169,9 +182,9 @@ public class Player : MonoBehaviour {
 		default:
 			break;
 		}
-
+	
 		Debug.Log("Jump");
-		jumpFlag = true;
+		isJumping = true;
 		jumpTime = 0.0f;
 	}
 
@@ -228,7 +241,8 @@ public class Player : MonoBehaviour {
 	private void FixedUpdate()
 	{
 		// ジャンプ
-		//Jump();
+		Jump();
+		Move();
 	}
 
 }

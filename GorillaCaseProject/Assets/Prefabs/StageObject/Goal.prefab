@@ -332,7 +332,7 @@ Transform:
   m_GameObject: {fileID: 1858622392737026}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -0, y: -0.08, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 0.007, y: 0.007, z: 0.007}
   m_Children:
   - {fileID: 4752138484527750}
   - {fileID: 4335581312132232}
@@ -639,8 +639,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   mTotalButtonOn_Debug: 0
-  mOpenTakeTime: 0.2
-  mCloseTakeTime: 0.2
+  mOpenTakeTime: 0.5
+  mCloseTakeTime: 0.5
   mInPlayerList: []
   mLampTopPrefab: {fileID: 1142396243667796, guid: fab6f0b2cc713bb4baa508d0466f7579,
     type: 2}
@@ -653,10 +653,10 @@ MonoBehaviour:
   mLampInterval: 0.35
   mModel: {fileID: 1876482738184510}
   mGoalTrigger: {fileID: 1172663709437058}
-  mLampBasePosition: {x: 2.07, y: 2.46, z: 0}
+  mLampBasePosition: {x: 1.54, y: 1.54, z: 0}
   mLampModel: {fileID: 1582020913665272}
   mLampMaterial: {fileID: 2100000, guid: 6348c40361c0a164b9af52f310d2048e, type: 2}
   mLampOnEmission: {r: 0, g: 1.5, b: 0, a: 0}
-  mLampOnEmissionPower: 1
+  mLampOnEmissionPower: 1.1
   mLampOffEmission: {r: 0.3, g: 0.3, b: 0.3, a: 0}
   mLampOffEmissionPower: 1

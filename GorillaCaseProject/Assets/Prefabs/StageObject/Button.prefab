@@ -206,7 +206,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1622805085306932}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.101, z: 0}
+  m_LocalPosition: {x: 0, y: 0.126, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4836601943409218}
@@ -286,7 +286,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1001876104912610}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.208, z: 0}
+  m_LocalPosition: {x: 0, y: 0.307, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4836601943409218}
@@ -316,7 +316,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1770351389065498}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.026, z: 0}
+  m_LocalPosition: {x: 0, y: 0.076, z: 0}
   m_LocalScale: {x: 0.34532958, y: 0.12658185, z: 0.34532958}
   m_Children: []
   m_Father: {fileID: 4380392710654394}
@@ -495,8 +495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f29b05d1035760649be5dddd0eb10e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mPushTakeTime: 0.5
-  mReleaseTakeTime: 0.5
+  mPushTakeTime: 1
+  mReleaseTakeTime: 1
   mDirection: 0
   mPushRateOn: 0.5
   mPushRateOff: 0.5
@@ -505,7 +505,7 @@ MonoBehaviour:
   mLightModel: {fileID: 1471144382747478}
   mLightMaterial: {fileID: 2100000, guid: d1e194ea75ed44246a78fdec650854e2, type: 2}
   mButtonOnColor: {r: 0, g: 0.7490196, b: 0.8235294, a: 0}
-  mButtonOnColorPower: 1.2
+  mButtonOnColorPower: 2.5
   mButtonOffColor: {r: 0.20588237, g: 0.20588237, b: 0.20588237, a: 0}
   mButtonOffColorPower: 1
   mLedgeMoveStart: {fileID: 1001876104912610}
