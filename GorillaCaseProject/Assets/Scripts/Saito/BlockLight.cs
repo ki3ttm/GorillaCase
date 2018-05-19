@@ -20,10 +20,27 @@ public class BlockLight : MonoBehaviour {
 	[SerializeField]
 	bool mIsBlock = true;
 
+	[SerializeField]
+	Color mFlyingColor;
+
+	[SerializeField]
+	float mFlyingColorPower = 1.0f;
+
+	[SerializeField]
+	Color mLightColor;
+
+	[SerializeField]
+	float mLightColorPower = 1.0f;
+
+	[SerializeField]
+	Color mHeavyColor;
+
+	[SerializeField]
+	float mHeavyColorPower = 1.0f;
 
 	//色を変更するマテリアル
-	Material mat;
-	Color emission;
+	[SerializeField]
+	Material mLightMaterial;
 
 
 	//重さを管理しているコンポーネントへの参照
@@ -35,61 +52,48 @@ public class BlockLight : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		//マテリアルの取得
-		var lRenderer = mLightObject.GetComponent<Renderer>();
-
-		mat = null;
-		if(mIsBlock) {
-			mat = lRenderer.materials[1];
-		}
-		
-
 		//コンポーネントの取得
 		mWeightManager = GetComponent<WeightManager>();
 
 		//重さに応じて光る場所を変更
 		ChangeLight(mWeightManager.SeemWeightLv);
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+		
 		//前のフレームから重さが変わっていたら
-		if(mBeforeWeight != mWeightManager.SeemWeightLv) {
+		if (mBeforeWeight != mWeightManager.SeemWeightLv) {
 			//重さに応じて光る場所を変更
 			ChangeLight(mWeightManager.SeemWeightLv);
 		}
-
 	}
 
 
 	//重さに応じて光る場所を変更
 	void ChangeLight(WeightManager.Weight aWeight) {
-
-		//何番目のマテリアルまで光るか
-		emission = GetColor(aWeight);
-
+		
 		//光らせる
-		if(mat != null) {
-			mat.SetColor("_EmissionColor", emission);
+		if (mIsBlock) {
+			Utility.ChangeMaterialColor(mLightObject, mLightMaterial, "_EmissionColor", GetColor(aWeight));
 		}
 		
-
 		ShowEffect(aWeight);
 
 		mBeforeWeight = aWeight;
 	}
 
 
-	//光るマテリアルを返す
-	static Color GetColor(WeightManager.Weight aWeight) {
+	//光る色を返す
+	Color GetColor(WeightManager.Weight aWeight) {
 		switch (aWeight) {
 			case WeightManager.Weight.flying:
-				return Color.yellow;
+				return mFlyingColor * mFlyingColorPower;
 			case WeightManager.Weight.light:
-				return Color.green;
+				return mLightColor * mLightColorPower;
 			case WeightManager.Weight.heavy:
-				return Color.red;
+				return mHeavyColor * mHeavyColorPower;
 		}
 		return Color.black;
 	}
@@ -97,23 +101,42 @@ public class BlockLight : MonoBehaviour {
 	void ShowEffect(WeightManager.Weight aWeight)
 	{
 		if(aWeight == WeightManager.Weight.flying) {
-			mHoverModel.SetActive(true);
-			mLightModel.SetActive(false);
-			mHeavyModel.SetActive(false);
+			Play(mHoverModel);
+			Stop(mLightModel);
+			Stop(mHeavyModel);
 		}
 
 		if (aWeight == WeightManager.Weight.light)
 		{
-			mHoverModel.SetActive(false);
-			mLightModel.SetActive(true);
-			mHeavyModel.SetActive(false);
+			Play(mLightModel);
+			Stop(mHoverModel);
+			Stop(mHeavyModel);
 		}
 
 		if (aWeight == WeightManager.Weight.heavy)
 		{
-			mHoverModel.SetActive(false);
-			mLightModel.SetActive(false);
-			mHeavyModel.SetActive(true);
+			Play(mHeavyModel);
+			Stop(mLightModel);
+			Stop(mHoverModel);
+		}
+	}
+
+	void Play(GameObject aWeightModel)
+	{
+		foreach (var p in aWeightModel.GetComponentsInChildren<ParticleSystem>()) {
+			p.Play();
+		}
+		foreach (var p in aWeightModel.GetComponentsInChildren<MeshRenderer>()) {
+			p.enabled = true;
+		}
+	}
+	void Stop(GameObject aWeightModel)
+	{
+		foreach (var p in aWeightModel.GetComponentsInChildren<ParticleSystem>()) {
+			p.Stop();
+		}
+		foreach (var p in aWeightModel.GetComponentsInChildren<MeshRenderer>()) {
+			p.enabled = false;
 		}
 	}
 }

@@ -8,17 +8,18 @@ public class LightBall : MonoBehaviour {
 	Vector3 mFrom;
 	Vector3 mTo;
 
-	public Vector3 FromPoint
-	{
+	public Vector3 FromPoint {
 		get { return mFrom; }
 	}
-	public Vector3 ToPoint
-	{
+	public Vector3 ToPoint {
 		get { return mTo; }
 	}
 
 	[SerializeField]
 	GameObject mCollider;
+
+	[SerializeField]
+	GameObject mModel;
 
 	public List<GameObject> mIgnoreList = new List<GameObject>();
 
@@ -40,14 +41,24 @@ public class LightBall : MonoBehaviour {
 
 	Vector3 mBeforePosition;
 
+	bool lBeforeCheck = false;
+
 	// Use this for initialization
 	void Start () {
 		
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
 
+		if(!mModel.activeSelf) {
+			if(lBeforeCheck == true) {
+				mModel.SetActive(true);
+			}
+			else {
+				lBeforeCheck = true;
+			}
+		}
 	}
 
 
@@ -68,6 +79,8 @@ public class LightBall : MonoBehaviour {
 		mIsHit = false;
 		transform.position = aFrom;
 		SetPoint(aFrom, aTo);
+		mModel.SetActive(false);
+		lBeforeCheck = false;
 	}
 	
 	void ReachCheck() {
@@ -118,6 +131,23 @@ public class LightBall : MonoBehaviour {
 		}
 		else {
 			mIsHit = true;
+		}
+	}
+
+	public void Play() {
+		foreach(var p in mModel.GetComponentsInChildren<ParticleSystem>()) {
+			p.Play();
+		}
+		foreach (var p in mModel.GetComponentsInChildren<MeshRenderer>()) {
+			p.enabled = true;
+		}
+	}
+	public void Stop() {
+		foreach (var p in mModel.GetComponentsInChildren<ParticleSystem>()) {
+			p.Stop();
+		}
+		foreach (var p in mModel.GetComponentsInChildren<MeshRenderer>()) {
+			p.enabled = false;
 		}
 	}
 }

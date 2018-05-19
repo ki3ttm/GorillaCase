@@ -6420,7 +6420,7 @@ Transform:
   m_GameObject: {fileID: 1646794276795038}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.31, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 4225680021771714}
   m_RootOrder: 9
@@ -16193,6 +16193,13 @@ MonoBehaviour:
   mHeavyModel: {fileID: 1131200644018514}
   mLightObject: {fileID: 1547521968370640}
   mIsBlock: 0
+  mFlyingColor: {r: 0, g: 0, b: 0, a: 0}
+  mFlyingColorPower: 1
+  mLightColor: {r: 0, g: 0, b: 0, a: 0}
+  mLightColorPower: 1
+  mHeavyColor: {r: 0, g: 0, b: 0, a: 0}
+  mHeavyColorPower: 1
+  mLightMaterial: {fileID: 0}
 --- !u!114 &114857141260075686
 MonoBehaviour:
   m_ObjectHideFlags: 1

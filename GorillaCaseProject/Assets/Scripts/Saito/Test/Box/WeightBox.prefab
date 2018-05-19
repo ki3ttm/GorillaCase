@@ -992,7 +992,7 @@ Transform:
   m_GameObject: {fileID: 1567043971523352}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 4286516106996078}
   m_RootOrder: 7
@@ -1073,7 +1073,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1621030181029824}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_MotionVectors: 1
@@ -1644,6 +1644,13 @@ MonoBehaviour:
   mHeavyModel: {fileID: 1747986067869880}
   mLightObject: {fileID: 1344407431695202}
   mIsBlock: 1
+  mFlyingColor: {r: 0.622, g: 0, b: 1, a: 0}
+  mFlyingColorPower: 0.3
+  mLightColor: {r: 0.622, g: 0, b: 1, a: 0}
+  mLightColorPower: 0.7
+  mHeavyColor: {r: 0.622, g: 0, b: 1, a: 0}
+  mHeavyColorPower: 1.2
+  mLightMaterial: {fileID: 2100000, guid: a018d7c21e0e53241b0cf2c8013111ef, type: 2}
 --- !u!114 &114606042104698248
 MonoBehaviour:
   m_ObjectHideFlags: 1

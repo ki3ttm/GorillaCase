@@ -20,7 +20,7 @@ public class ShowPause : MonoBehaviour {
 		mBeforeTimeScale = Time.timeScale;
 		ShowText(Time.timeScale != 0.0f);
 
-		FindObjectOfType<SoundManager>().Play(mStageBGM, 4.0f);
+		//FindObjectOfType<SoundManager>().Play(mStageBGM, 4.0f);
 	}
 	
 	// Update is called once per frame

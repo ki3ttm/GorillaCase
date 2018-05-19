@@ -95,7 +95,7 @@ Transform:
   m_GameObject: {fileID: 1018538618722452}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 3}
   m_Children: []
   m_Father: {fileID: 4685521814041118}
   m_RootOrder: 1
@@ -153,7 +153,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mModel: {fileID: 1018538618722452}
   mCollider: {fileID: 1421805893274796}
-  mModelPrefab: {fileID: 1806731677111592, guid: 3bbdb459c43f19e459c3decd03b68578,
+  mModelUpPrefab: {fileID: 1806731677111592, guid: 3bbdb459c43f19e459c3decd03b68578,
     type: 2}
+  mModelDownPrefab: {fileID: 1016084283374044, guid: 9d6242dfb8a0d3d46a6f39c7ede0613b,
+    type: 2}
+  mModelLeftPrefab: {fileID: 1230487083095198, guid: dcd606d97f92dd841ad218239b19bdfd,
+    type: 2}
+  mModelRightPrefab: {fileID: 1635081522260412, guid: 71c5860aaecb6d046b94f6ebdb259682,
+    type: 2}
+  mModelUpLeftPrefab: {fileID: 1813447458593782, guid: a0f1d029a60fc224f8d2322535d6a6cd,
+    type: 2}
+  mModelUpRightPrefab: {fileID: 1773159819984178, guid: b1ad3306fe4a6144f8268a64323f88a8,
+    type: 2}
+  mModelDownLeftPrefab: {fileID: 1784088019646456, guid: 89b5cea0ddc4bc048a29454148f6ad05,
+    type: 2}
+  mModelDownRightPrefab: {fileID: 1406862235947316, guid: 9720c1c50570d4a4980697986a60496f,
+    type: 2}
+  mModelNonePrefab: {fileID: 1410631784616446, guid: 0bbb3d99e93f1fe4a8b47e59b8460fc0,
+    type: 2}
+  mIsUp: 0
+  mIsDown: 0
+  mIsLeft: 0
+  mIsRight: 0
   mWidth: 4
   mHeight: 4

@@ -67,7 +67,7 @@ public class MassShifter : MonoBehaviour {
 		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(false);
-			mLightBall.SetActive(false);
+			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mSource, false, Color.white);
 			ShowModelHilight(mDest, false, Color.white);
@@ -86,16 +86,12 @@ public class MassShifter : MonoBehaviour {
 		UpdateModelHilight();
 
 		if (GetShiftButton()) {
-
-			if(CanShiftSource(mSelect)) {
+			//移す元が選ばれていない場合
+			if(mSelect != null) {
 				mSource = mSelect;
 				ChangeState(CSelectState.cClick);
 			}
 			else {
-				if(mSelect) {
-					mSelect.GetComponent<Animator>().Play("BoxCantShift", 0);
-					FindObjectOfType<SoundManager>().Play(mCantShiftSE);
-				}
 				ChangeState(CSelectState.cFail);
 			}
 		}
@@ -106,7 +102,7 @@ public class MassShifter : MonoBehaviour {
 		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(true);
-			mLightBall.SetActive(false);
+			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSource, true, mSourceColor);
 
 			ChangeCursor(false);
@@ -127,16 +123,20 @@ public class MassShifter : MonoBehaviour {
 
 		//左クリックされなくなると
 		if (!GetShiftButton()) {
-			if (CanShift(mSource, mSelect)) {
-				mDest = mSelect;
-				ChangeState(CSelectState.cMoveSourceToDest);
+
+			//移す先が存在しない場合
+			if(mSelect == null) {
+				ChangeState(CSelectState.cFail);
+			}
+			//ソースから重さを移せない時
+			else if (!CanShiftSource(mSource)) {
+				mSource.GetComponent<Animator>().Play("BoxCantShift", 0);
+				FindObjectOfType<SoundManager>().Play(mCantShiftSE);
+				ChangeState(CSelectState.cFail);
 			}
 			else {
-				if (mSelect) {
-					mSelect.GetComponent<Animator>().Play("BoxCantShift", 0);
-					FindObjectOfType<SoundManager>().Play(mCantShiftSE);
-				}
-				ChangeState(CSelectState.cFail);
+				mDest = mSelect;
+				ChangeState(CSelectState.cMoveSourceToDest);
 			}
 		}
 	}
@@ -148,13 +148,14 @@ public class MassShifter : MonoBehaviour {
 			mShotLineSourceToDest.SetActive(false);
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mDest, true, mDestColor);
-			mLightBall.SetActive(true);
 
 			mLightBall.GetComponent<LightBall>().mIgnoreList.Clear();
 			mLightBall.GetComponent<LightBall>().mIgnoreList.Add(mSource);
 			mLightBall.GetComponent<LightBall>().mIgnoreList.Add(mDest);
 
 			mLightBall.GetComponent<LightBall>().InitPoint(mSource.transform.position, mDest.transform.position);
+
+			mLightBall.GetComponent<LightBall>().Play();
 
 			FindObjectOfType<SoundManager>().Play(mShiftSourceSE);
 
@@ -169,8 +170,15 @@ public class MassShifter : MonoBehaviour {
 		lLightBall.UpdatePoint();
 
 		if(lLightBall.IsReached) {
-			ChangeState(CSelectState.cSuccess);
-			FindObjectOfType<SoundManager>().Play(mShiftDestSE);
+			if (!CanShift(mSource, mDest)) {
+				//mSource.GetComponent<Animator>().Play("BoxCantShift", 0);
+				//FindObjectOfType<SoundManager>().Play(mCantShiftSE);
+				ChangeState(CSelectState.cReturnLightBall);
+			}
+			else {
+				ChangeState(CSelectState.cSuccess);
+				FindObjectOfType<SoundManager>().Play(mShiftDestSE);
+			}
 		}
 		
 		if(lLightBall.IsHit) {
@@ -212,9 +220,10 @@ public class MassShifter : MonoBehaviour {
 			mInitState = false;
 			ShowModelHilight(mSource, true, mSourceColor);
 			ShowModelHilight(mDest, false, mDestColor);
-			mLightBall.SetActive(true);
 
 			mLightBall.GetComponent<LightBall>().InitPoint(mLightBall.transform.position, mSource.transform.position);
+
+			mLightBall.GetComponent<LightBall>().Play();
 
 			FindObjectOfType<SoundManager>().Play(mCancelShiftSE);
 		}
@@ -238,7 +247,7 @@ public class MassShifter : MonoBehaviour {
 			ShowModelHilight(mSource, false, Color.white);
 			ShowModelHilight(mDest, false, Color.white);
 			mShotLineSourceToDest.SetActive(false);
-			mLightBall.SetActive(false);
+			mLightBall.GetComponent<LightBall>().Stop();
 		}
 
 		//押されていないなら
@@ -331,6 +340,13 @@ public class MassShifter : MonoBehaviour {
 	GameObject mLightBall;
 
 	[SerializeField, ColorUsage(false, true, 0f, 8f, 0.125f, 3f)]
+	Color mCanSelectColorShotLine;
+
+	[SerializeField, ColorUsage(false, true, 0f, 8f, 0.125f, 3f)]
+	Color mCanNotSelectColorShotLine;
+
+
+	[SerializeField, ColorUsage(false, true, 0f, 8f, 0.125f, 3f)]
 	Color mCanSelectColor;
 
 	[SerializeField, ColorUsage(false, true, 0f, 8f, 0.125f, 3f)]
@@ -350,7 +366,7 @@ public class MassShifter : MonoBehaviour {
 			mClickTime = 0.0f;
 			mSelectDouble = false;
 			mShotLineSourceToDest.SetActive(true);
-			mLightBall.SetActive(false);
+			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mSource, true, mSourceColor);
 
@@ -481,12 +497,12 @@ public class MassShifter : MonoBehaviour {
 
 		if (mLightBall.GetComponent<LightBall>().ThroughShotLine(aFrom.transform.position, aTo.transform.position, new GameObject[] { mSource, mDest, mSelect }.ToList()))
 		{
-			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.green, true);
+			aShotLine.GetComponent<ShiftShotLine>().SetColor(mCanSelectColorShotLine, true);
 			ChangeCursorColor(Color.green);
 		}
 		else
 		{
-			aShotLine.GetComponent<ShiftShotLine>().SetColor(Color.red, false);
+			aShotLine.GetComponent<ShiftShotLine>().SetColor(mCanNotSelectColorShotLine, false);
 			ChangeCursorColor(Color.red);
 		}
 	}
@@ -561,17 +577,14 @@ public class MassShifter : MonoBehaviour {
 			UnionBlock lDestUnion = aDest.GetComponent<UnionBlock>();
 
 			//両方とも共有ブロックで
-			if (lSourceUnion != null && lDestUnion != null)
-			{
+			if (lSourceUnion != null && lDestUnion != null) {
 				//同じ共有グループなら
-				if (lSourceUnion.IsSameUnionGroup(lDestUnion))
-				{
+				if (lSourceUnion.IsSameUnionGroup(lDestUnion)) {
 					return false;
 				}
 			}
 
-			if (aDest.GetComponent<WeightManager>().WeightLv == WeightManager.Weight.heavy)
-			{
+			if (aDest.GetComponent<WeightManager>().WeightLv == WeightManager.Weight.heavy) {
 				return false;
 			}
 		}

@@ -11,7 +11,44 @@ public class StageBlock : MonoBehaviour {
 	GameObject mCollider;
 
 	[SerializeField]
-	GameObject mModelPrefab;
+	GameObject mModelUpPrefab;
+
+	[SerializeField]
+	GameObject mModelDownPrefab;
+
+	[SerializeField]
+	GameObject mModelLeftPrefab;
+
+	[SerializeField]
+	GameObject mModelRightPrefab;
+
+	[SerializeField]
+	GameObject mModelUpLeftPrefab;
+
+	[SerializeField]
+	GameObject mModelUpRightPrefab;
+
+	[SerializeField]
+	GameObject mModelDownLeftPrefab;
+
+	[SerializeField]
+	GameObject mModelDownRightPrefab;
+
+	[SerializeField]
+	GameObject mModelNonePrefab;
+
+	[SerializeField]
+	bool mIsUp;
+
+	[SerializeField]
+	bool mIsDown;
+
+	[SerializeField]
+	bool mIsLeft;
+
+	[SerializeField]
+	bool mIsRight;
+	
 
 	[SerializeField, Tooltip("幅")]
 	int mWidth;
@@ -46,7 +83,53 @@ public class StageBlock : MonoBehaviour {
 
 			for (int j = 0; j < mWidth; j++) {
 
-				GameObject lGameObject = InstantiatePrefab(mModelPrefab, mModel);
+				bool lUp = false;
+				bool lDown = false;
+				bool lLeft = false;
+				bool lRight = false; ;
+				if (mIsUp && i == mHeight - 1) {
+					lUp = true;
+				}
+				if (mIsDown && i == 0) {
+					lDown = true;
+				}
+				if (mIsLeft && j == 0) {
+					lLeft = true;
+				}
+				if (mIsRight && j == mWidth - 1) {
+					lRight = true;
+				}
+
+				GameObject lPrefab = null;
+				if(lUp && lLeft) {
+					lPrefab = mModelUpLeftPrefab;
+				}
+				else if (lUp && lRight) {
+					lPrefab = mModelUpRightPrefab;
+				}
+				else if (lDown && lLeft) {
+					lPrefab = mModelDownLeftPrefab;
+				}
+				else if (lDown && lRight) {
+					lPrefab = mModelDownRightPrefab;
+				}
+				else if (lUp) {
+					lPrefab = mModelUpPrefab;
+				}
+				else if (lDown) {
+					lPrefab = mModelDownPrefab;
+				}
+				else if (lLeft) {
+					lPrefab = mModelLeftPrefab;
+				}
+				else if (lRight) {
+					lPrefab = mModelRightPrefab;
+				}
+				else {
+					lPrefab = mModelNonePrefab;
+				}
+
+				GameObject lGameObject = InstantiatePrefab(lPrefab, mModel);
 				lGameObject.transform.localPosition = new Vector3(j, i, 0.0f);
 			}
 		}

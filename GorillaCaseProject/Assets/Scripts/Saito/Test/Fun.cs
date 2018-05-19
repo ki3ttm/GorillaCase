@@ -58,7 +58,7 @@ public class Fun : MonoBehaviour {
 	}
 
 	void Rotate() {
-		mRotateModel.transform.rotation *= Quaternion.Euler(0.0f, 0.0f, 360.0f / mRotateSecond * Time.deltaTime);
+		mRotateModel.transform.rotation *= Quaternion.Euler(360.0f / mRotateSecond * Time.deltaTime, 0.0f, 0.0f);
 	}
 
 	void WindHit() {
