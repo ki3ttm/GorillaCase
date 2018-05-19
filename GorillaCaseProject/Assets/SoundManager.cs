@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour {
 
+	[SerializeField, EditOnPrefab]
+	GameObject mSounds;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -14,11 +17,26 @@ public class SoundManager : MonoBehaviour {
 		
 	}
 
-	public void Play(GameObject aSoundPrefab, float aDelay) {
-		var g = Instantiate(aSoundPrefab, transform);
-		g.GetComponent<AudioSource>().PlayDelayed(aDelay);
+	public GameObject Play(GameObject aSoundPrefab, float aDelay) {
+		var lSoundInstance = Instantiate(aSoundPrefab, mSounds.transform);
+		lSoundInstance.GetComponent<AudioSource>().PlayDelayed(aDelay);
+		return lSoundInstance;
 	}
-	public void Play(GameObject aSoundPrefab) {
-		Play(aSoundPrefab, 0.0f);
+	public GameObject Play(GameObject aSoundPrefab) {
+		return Play(aSoundPrefab, 0.0f);
+	}
+
+	public void Stop(GameObject aSoundInstance) {
+		aSoundInstance.GetComponent<AudioSource>().Stop();
+		Destroy(aSoundInstance);
+	}
+
+	public void Pause(GameObject aSoundInstance, bool aPause) {
+		if(aPause) {
+			aSoundInstance.GetComponent<AudioSource>().Pause();
+		}
+		else {
+			aSoundInstance.GetComponent<AudioSource>().UnPause();
+		}
 	}
 }
