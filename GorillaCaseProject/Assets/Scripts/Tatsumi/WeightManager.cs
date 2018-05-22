@@ -43,9 +43,11 @@ public class WeightManager : MonoBehaviour {
 	// Update is called once per frame
 	//	void Update() {}
 
-	void Start() {
+	void Start()
+	{
 		SeemWeightLv = WeightLv;
 	}
+
 
 	// pull元からpush先へ指定数の重さレベルを移し、移す事に成功したレベル数を返す
 	public int PullWeight(WeightManager _from, int _num = 1) {
