@@ -130,6 +130,8 @@ public class MassShifter : MonoBehaviour {
 			ChangeCursor(false);
 		}
 
+		mClickTime += Time.deltaTime;
+
 		mBeforeSelect = mSelect;
 		mSelect = GetNearestObject(GetNearWeightObject(), mSource);
 
@@ -631,6 +633,7 @@ public class MassShifter : MonoBehaviour {
 		}
 
 		UpdateShotLine(mShotLineSourceToDest, mSource, mCursor);
+		mClickTime += Time.deltaTime;
 
 		//カーソルがコライダーから外れると
 		if (GetNearestObject(GetNearWeightObject()) != mSource) {
@@ -763,10 +766,19 @@ public class MassShifter : MonoBehaviour {
 	void UpdateModelHilight() {
 		if(mBeforeSelect != mSelect) {
 			if(mBeforeSelect != null) {
-				ShowModelHilight(mBeforeSelect, false, Color.white);
+				if(mState == CSelectState.cClick || mState == CSelectState.cDrag) {
+					ShowModelHilight(mBeforeSelect, false, Color.white);
+				}
+				else {
+					ShowModelHilight(mBeforeSelect, false, Color.white);
+				}
+				
 			}
 			if(mSelect != null) {
+
+				/*
 				bool lCanSelect = false;
+
 				if(mState == CSelectState.cNormal)
 				{
 					if(CanShiftSource(mSelect)) {
@@ -785,6 +797,9 @@ public class MassShifter : MonoBehaviour {
 				else {
 					ShowModelHilight(mSelect, true, mCanNotSelectColor);
 				}
+				*/
+
+				ShowModelHilight(mSelect, true, mCanSelectColor);
 			}
 		}
 	}
