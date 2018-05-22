@@ -44,10 +44,13 @@ public class StageBackGround : MonoBehaviour {
 		//モデルの配置
 		for (int i = 0; i < mHeight; i++) {
 			for (int j = 0; j < mWidth; j++) {
+				float lXIndex = j - (mWidth - 1) / 2.0f;
+				float lYIndex = i - (mHeight - 1) / 2.0f;
 				GameObject lGameObject = InstantiatePrefab(mModelPrefab, gameObject);
-				lGameObject.transform.localPosition = new Vector3(j * mXInterval, i * mYInterval, 0.0f);
+				lGameObject.transform.localPosition = new Vector3(lXIndex * mXInterval, lYIndex * mYInterval, 0.0f);
 			}
 		}
+
 	}
 
 	[ContextMenu("Resize")]

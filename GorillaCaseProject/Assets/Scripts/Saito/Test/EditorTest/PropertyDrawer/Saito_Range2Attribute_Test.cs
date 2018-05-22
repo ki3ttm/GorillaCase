@@ -5,7 +5,7 @@ using UnityEngine;
 public class Saito_Range2Attribute_Test : MonoBehaviour {
 
 	[SerializeField, Saito_Range2(0, 10)]
-	int hp;
+	List<int> hp;
 
 	[SerializeField, Saito_Range2(0, 10)]
 	string str;

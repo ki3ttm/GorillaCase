@@ -5,10 +5,10 @@ using UnityEngine;
 public class ShowPause : MonoBehaviour {
 
 	[SerializeField]
-	GameObject mPlayText;
+	GameObject mPauseText;
 
 	[SerializeField]
-	GameObject mPauseText;
+	GameObject mPlayText;
 
 	float mBeforeTimeScale;
 
@@ -33,12 +33,13 @@ public class ShowPause : MonoBehaviour {
 
 	void ShowText(bool aIsPlaying) {
 		if(aIsPlaying) {
-			mPlayText.SetActive(true);
 			mPauseText.SetActive(false);
+			mPlayText.SetActive(true);
+			mPlayText.GetComponent<TextMesh>().text = "×" + Time.timeScale;
 		}
 		else {
-			mPlayText.SetActive(false);
 			mPauseText.SetActive(true);
+			mPlayText.SetActive(false);
 		}
 	}
 }

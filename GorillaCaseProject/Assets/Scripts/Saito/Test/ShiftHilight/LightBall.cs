@@ -34,8 +34,8 @@ public class LightBall : MonoBehaviour {
 		get { return mIsHit; }
 	}
 
-	[SerializeField, Tooltip("光の弾が進む速度")]
-	float mMoveSpeed = 1.0f;
+	[Tooltip("光の弾が進む速度")]
+	public float mMoveSpeed = 1.0f;
 
 	float mFromDistance;    //Fromから進んだ距離
 
@@ -65,9 +65,10 @@ public class LightBall : MonoBehaviour {
 	public void UpdatePoint() {
 		
 		mFromDistance += Time.deltaTime * mMoveSpeed;
-
-		UpdatePosition();
 		ReachCheck();
+
+		mFromDistance = Mathf.Min((mFrom - mTo).magnitude, mFromDistance);
+		UpdatePosition();
 		HitCheck();
 	}
 	public void SetPoint(Vector3 aFrom, Vector3 aTo) {

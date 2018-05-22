@@ -58,10 +58,12 @@ MonoBehaviour:
     type: 2}
   mLightBallPrefab: {fileID: 1909216721728548, guid: 4df4bf19d46c6564d9c63a07fb2587d8,
     type: 2}
-  mCanSelectColor: {r: 0.375, g: 1.5, b: 0.375, a: 0}
-  mCanNotSelectColor: {r: 2, g: 0.5, b: 0.5, a: 0}
-  mSourceColor: {r: 0.5, g: 0.5, b: 2, a: 0}
-  mDestColor: {r: 2, g: 0, b: 2, a: 0}
+  mCanSelectColorShotLine: {r: 0, g: 0.55, b: 0, a: 0}
+  mCanNotSelectColorShotLine: {r: 0.51, g: 0, b: 0, a: 0}
+  mCanSelectColor: {r: 0.3, g: 1.2, b: 0.3, a: 0}
+  mCanNotSelectColor: {r: 1.2, g: 0.3, b: 0.3, a: 0}
+  mSourceColor: {r: 0.3, g: 0.3, b: 1.2, a: 0}
+  mDestColor: {r: 1.2, g: 0, b: 1.2, a: 0}
   mCursorMoveXSpeed: 10
   mCursorMoveYSpeed: 10
   mShiftOnValue: 0.8

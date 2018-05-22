@@ -14,8 +14,11 @@ public class MassShifter : MonoBehaviour {
 		mCursor = Instantiate(mCursorPrefab, transform);
 		mCursor.name = "ShiftCursor";
 
-		mLightBall = Instantiate(mLightBallPrefab, transform);
-		mLightBall.name = "LightBall";
+		mLightBallAlways = Instantiate(mLightBallPrefab, transform);
+		mLightBallAlways.name = "LightBallAlways";
+		mLightBallAlways.SetActive(false);
+
+		mLightBall = null;
 
 		Cursor.visible = false;
 	}
@@ -23,7 +26,7 @@ public class MassShifter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.timeScale == 0.0f) return;
-		FollowMousePosition();
+
 		UpdateState();
 	}
 
@@ -32,28 +35,48 @@ public class MassShifter : MonoBehaviour {
 
 		switch(mState) {
 			case CSelectState.cNormal:
+				FollowMousePosition();
 				UpdateNormal();
 				break;
 			case CSelectState.cClick:
+				FollowMousePosition();
 				UpdateClickRightClick();
 				break;
 			case CSelectState.cDrag:
+				FollowMousePosition();
 				UpdateDrag();
 				break;
 			case CSelectState.cMoveSourceToDest:
+				FollowMousePosition();
 				UpdateMoveSourceToDest();
 				break;
+			case CSelectState.cMoveFromShare:
+				FollowMousePosition();
+				UpdateMoveFromShare();
+				break;
+			case CSelectState.cMoveToShare:
+				FollowMousePosition();
+				UpdateMoveToShare();
+				break;
+			case CSelectState.cReturnToShare:
+				FollowMousePosition();
+				UpdateReturnToShare();
+				break;
 			case CSelectState.cReturnLightBall:
+				FollowMousePosition();
 				UpdateReturnLightBall();
 				break;
 			case CSelectState.cSuccess:
+				FollowMousePosition();
 				UpdateSuccess();
 				break;
 			case CSelectState.cFail:
 				UpdateFail();
 				break;
+			case CSelectState.cCantShift:
+				UpdateCantShift();
+				break;
 		}
-		
 	}
 
 	void ChangeState(CSelectState aState) {
@@ -67,11 +90,11 @@ public class MassShifter : MonoBehaviour {
 		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(false);
-			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mSource, false, Color.white);
 			ShowModelHilight(mDest, false, Color.white);
 
+			mCursor.SetActive(true);
 			ChangeCursor(true);
 
 			mSource = null;
@@ -102,7 +125,6 @@ public class MassShifter : MonoBehaviour {
 		if (mInitState == true) {
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(true);
-			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSource, true, mSourceColor);
 
 			ChangeCursor(false);
@@ -136,18 +158,208 @@ public class MassShifter : MonoBehaviour {
 			}
 			else {
 				mDest = mSelect;
-				ChangeState(CSelectState.cMoveSourceToDest);
+				if(mSource.GetComponent<UnionBlock>()) {
+					ChangeState(CSelectState.cMoveFromShare);
+				}
+				else {
+					ChangeState(CSelectState.cMoveSourceToDest);
+				}
 			}
 		}
 	}
 
-	void UpdateMoveSourceToDest()
-	{
-		if(mInitState == true) {
+	void UpdateMoveFromShare() {
+		if (mInitState == true) {
+
 			mInitState = false;
 			mShotLineSourceToDest.SetActive(false);
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mDest, true, mDestColor);
+
+			UnionBlock lSourceUnion = mSource.GetComponent<UnionBlock>();
+			mLightBallShare.Clear();
+
+			float lMinDistance = float.MaxValue;
+
+			foreach (var s in lSourceUnion.GetUnionAllListExceptOwn()) {
+				GameObject l = Instantiate(mLightBallPrefab, transform);
+				l.GetComponent<LightBall>().InitPoint(s.transform.position, mSource.transform.position);
+				lMinDistance = Mathf.Min((s.transform.position - mSource.transform.position).magnitude, lMinDistance);
+				l.GetComponent<LightBall>().Play();
+				mLightBallShare.Add(l);
+
+				if(mSelectDouble == false) {
+					s.GetComponent<WeightManager>().SeemWeightLv -= 1;
+				}
+				else {
+					s.GetComponent<WeightManager>().SeemWeightLv -= 2;
+				}
+			}
+
+			foreach(var l in mLightBallShare) {
+				LightBall li = l.GetComponent<LightBall>();
+				li.mMoveSpeed = (li.FromPoint - li.ToPoint).magnitude / lMinDistance * mLightBallAlways.GetComponent<LightBall>().mMoveSpeed;
+			}
+
+			FindObjectOfType<SoundManager>().Play(mShiftSourceSE);
+
+		}
+
+		var ul = mSource.GetComponent<UnionBlock>().GetUnionAllListExceptOwn();
+
+		bool lAllReach = true;
+		for(int i = 0; i < mLightBallShare.Count; i++) {
+			LightBall li = mLightBallShare[i].GetComponent<LightBall>();
+			UnionBlock u = ul[i].GetComponent<UnionBlock>();
+			li.SetPoint(u.transform.position, mSource.transform.position);
+			li.UpdatePoint();
+			if(li.IsReached == false) {
+				lAllReach = false;
+			}
+		}
+
+		if(lAllReach == true) {
+			foreach(var s in mLightBallShare) {
+				DestroyLightBall(s);
+			}
+			mLightBallShare.Clear();
+			ChangeState(CSelectState.cMoveSourceToDest);
+		}
+	}
+
+	void UpdateMoveToShare() {
+
+		if (mInitState == true) {
+
+			mInitState = false;
+
+			UnionBlock lDestUnion = mDest.GetComponent<UnionBlock>();
+			mLightBallShare.Clear();
+
+			float lMinDistance = float.MaxValue;
+
+			foreach (var s in lDestUnion.GetUnionAllListExceptOwn()) {
+
+				GameObject l = Instantiate(mLightBallPrefab, transform);
+				l.GetComponent<LightBall>().InitPoint(mDest.transform.position, s.transform.position);
+				lMinDistance = Mathf.Min((mDest.transform.position - s.transform.position).magnitude, lMinDistance);
+				l.GetComponent<LightBall>().Play();
+				mLightBallShare.Add(l);
+			}
+
+			foreach (var l in mLightBallShare) {
+				LightBall li = l.GetComponent<LightBall>();
+				li.mMoveSpeed = (li.FromPoint - li.ToPoint).magnitude / lMinDistance * mLightBallAlways.GetComponent<LightBall>().mMoveSpeed;
+			}
+		}
+
+		var ul = mDest.GetComponent<UnionBlock>().GetUnionAllListExceptOwn();
+
+		bool lAllReach = true;
+		for (int i = 0; i < mLightBallShare.Count; i++)
+		{
+			LightBall li = mLightBallShare[i].GetComponent<LightBall>();
+			UnionBlock u = ul[i].GetComponent<UnionBlock>();
+			li.SetPoint(mDest.transform.position, u.transform.position);
+			li.UpdatePoint();
+			if (li.IsReached == false) {
+				lAllReach = false;
+			}
+		}
+
+		if (lAllReach == true) {
+			foreach (var s in mLightBallShare) {
+				DestroyLightBall(s);
+			}
+			FindObjectOfType<SoundManager>().Play(mShiftDestSE);
+			foreach (var s in mDest.GetComponent<UnionBlock>().GetUnionAllListExceptOwn()) {
+				if(mSelectDouble == false)
+				{
+					s.GetComponent<WeightManager>().SeemWeightLv += 1;
+				}
+				else
+				{
+					s.GetComponent<WeightManager>().SeemWeightLv += 2;
+				}
+				
+			}
+			mLightBallShare.Clear();
+			ChangeState(CSelectState.cSuccess);
+		}
+	}
+
+	void UpdateReturnToShare() {
+
+		if (mInitState == true)
+		{
+
+			mInitState = false;
+
+			UnionBlock lSourceUnion = mSource.GetComponent<UnionBlock>();
+			mLightBallShare.Clear();
+
+			float lMinDistance = float.MaxValue;
+
+			foreach (var s in lSourceUnion.GetUnionAllListExceptOwn()) {
+
+				GameObject l = Instantiate(mLightBallPrefab, transform);
+				l.GetComponent<LightBall>().InitPoint(mSource.transform.position, s.transform.position);
+				lMinDistance = Mathf.Min((mSource.transform.position - s.transform.position).magnitude, lMinDistance);
+				l.GetComponent<LightBall>().Play();
+				mLightBallShare.Add(l);
+			}
+
+			foreach (var l in mLightBallShare) {
+				LightBall li = l.GetComponent<LightBall>();
+				li.mMoveSpeed = (li.FromPoint - li.ToPoint).magnitude / lMinDistance * mLightBallAlways.GetComponent<LightBall>().mMoveSpeed;
+			}
+		}
+
+		var ul = mSource.GetComponent<UnionBlock>().GetUnionAllListExceptOwn();
+
+		bool lAllReach = true;
+		for (int i = 0; i < mLightBallShare.Count; i++)
+		{
+			LightBall li = mLightBallShare[i].GetComponent<LightBall>();
+			UnionBlock u = ul[i].GetComponent<UnionBlock>();
+			li.SetPoint(mSource.transform.position, u.transform.position);
+			li.UpdatePoint();
+			if (li.IsReached == false) {
+				lAllReach = false;
+			}
+		}
+
+		if (lAllReach == true) {
+
+			foreach (var s in mLightBallShare) {
+				DestroyLightBall(s);
+			}
+			mLightBallShare.Clear();
+
+			FindObjectOfType<SoundManager>().Play(mShiftDestSE);
+			foreach (var s in mSource.GetComponent<UnionBlock>().GetUnionAllListExceptOwn()) {
+				if (mSelectDouble == false) {
+					s.GetComponent<WeightManager>().SeemWeightLv += 1;
+				}
+				else {
+					s.GetComponent<WeightManager>().SeemWeightLv += 2;
+				}
+			}
+			ChangeState(CSelectState.cFail);
+		}
+	}
+
+
+	void UpdateMoveSourceToDest()
+	{
+		if(mInitState == true) {
+
+			mInitState = false;
+			mShotLineSourceToDest.SetActive(false);
+			ShowModelHilight(mSelect, false, Color.white);
+			ShowModelHilight(mDest, true, mDestColor);
+
+			mLightBall = Instantiate(mLightBallPrefab, transform);
 
 			mLightBall.GetComponent<LightBall>().mIgnoreList.Clear();
 			mLightBall.GetComponent<LightBall>().mIgnoreList.Add(mSource);
@@ -159,7 +371,12 @@ public class MassShifter : MonoBehaviour {
 
 			FindObjectOfType<SoundManager>().Play(mShiftSourceSE);
 
-			mSource.GetComponent<WeightManager>().SeemWeightLv -= 1;
+			if(mSelectDouble == false) {
+				mSource.GetComponent<WeightManager>().SeemWeightLv -= 1;
+			}
+			else {
+				mSource.GetComponent<WeightManager>().SeemWeightLv -= 2;
+			}
 		}
 
 		UpdateShotLine(mShotLineSourceToDest, mSource, mDest);
@@ -176,7 +393,12 @@ public class MassShifter : MonoBehaviour {
 				ChangeState(CSelectState.cReturnLightBall);
 			}
 			else {
-				ChangeState(CSelectState.cSuccess);
+				if (mDest.GetComponent<UnionBlock>()) {
+					ChangeState(CSelectState.cMoveToShare);
+				}
+				else {
+					ChangeState(CSelectState.cSuccess);
+				}
 				FindObjectOfType<SoundManager>().Play(mShiftDestSE);
 			}
 		}
@@ -211,6 +433,7 @@ public class MassShifter : MonoBehaviour {
 			}
 		}
 
+		DestroyLightBall(mLightBall);
 		ChangeState(CSelectState.cNormal);
 	}
 
@@ -232,11 +455,21 @@ public class MassShifter : MonoBehaviour {
 		mLightBall.GetComponent<LightBall>().UpdatePoint();
 
 		if (mLightBall.GetComponent<LightBall>().IsReached) {
-			mSource.GetComponent<WeightManager>().SeemWeightLv += 1;
-			ChangeState(CSelectState.cFail);
+			if(mSelectDouble == false) {
+				mSource.GetComponent<WeightManager>().SeemWeightLv += 1;
+			}
+			else {
+				mSource.GetComponent<WeightManager>().SeemWeightLv += 2;
+			}
+			
+			DestroyLightBall(mLightBall);
+			if (mSource.GetComponent<UnionBlock>()) {
+				ChangeState(CSelectState.cReturnToShare);
+			}
+			else {
+				ChangeState(CSelectState.cFail);
+			}	
 		}
-
-		
 	}
 
 	void UpdateFail() {
@@ -247,7 +480,6 @@ public class MassShifter : MonoBehaviour {
 			ShowModelHilight(mSource, false, Color.white);
 			ShowModelHilight(mDest, false, Color.white);
 			mShotLineSourceToDest.SetActive(false);
-			mLightBall.GetComponent<LightBall>().Stop();
 		}
 
 		//押されていないなら
@@ -255,6 +487,23 @@ public class MassShifter : MonoBehaviour {
 			ChangeState(CSelectState.cNormal);
 		}
 	}
+
+	void UpdateCantShift() {
+
+		if (mInitState == true) {
+
+			mInitState = false;
+			ShowModelHilight(mSelect, false, Color.white);
+			ShowModelHilight(mSource, false, Color.white);
+			ShowModelHilight(mDest, false, Color.white);
+			mShotLineSourceToDest.SetActive(false);
+
+			mCursor.SetActive(false);
+		}
+
+		//外部からmCantShiftにtrueを入れられないと、この状態からは変化しない
+	}
+
 
 	GameObject[] GetNearWeightObject() {
 		Transform t = mCursor.transform.Find("Collider");
@@ -305,8 +554,12 @@ public class MassShifter : MonoBehaviour {
 		cDrag,
 		cMoveSourceToDest,
 		cSuccess,
+		cMoveFromShare,
+		cMoveToShare,
+		cReturnToShare,
 		cReturnLightBall,
 		cFail,
+		cCantShift
 	}
 	[SerializeField]
 	CSelectState mState;
@@ -338,6 +591,8 @@ public class MassShifter : MonoBehaviour {
 	GameObject mLightBallPrefab;
 
 	GameObject mLightBall;
+	GameObject mLightBallAlways;
+	List<GameObject> mLightBallShare = new List<GameObject>();
 
 	[SerializeField, ColorUsage(false, true, 0f, 8f, 0.125f, 3f)]
 	Color mCanSelectColorShotLine;
@@ -366,7 +621,6 @@ public class MassShifter : MonoBehaviour {
 			mClickTime = 0.0f;
 			mSelectDouble = false;
 			mShotLineSourceToDest.SetActive(true);
-			mLightBall.GetComponent<LightBall>().Stop();
 			ShowModelHilight(mSelect, false, Color.white);
 			ShowModelHilight(mSource, true, mSourceColor);
 
@@ -379,7 +633,7 @@ public class MassShifter : MonoBehaviour {
 		UpdateShotLine(mShotLineSourceToDest, mSource, mCursor);
 
 		//カーソルがコライダーから外れると
-		if (!GetNearWeightObject().Contains(mSource)) {
+		if (GetNearestObject(GetNearWeightObject()) != mSource) {
 			ChangeState(CSelectState.cDrag);
 		}
 
@@ -495,8 +749,7 @@ public class MassShifter : MonoBehaviour {
 
 		aShotLine.GetComponent<ShiftShotLine>().SetLinePosition(aFrom.transform.position, aTo.transform.position);
 
-		if (mLightBall.GetComponent<LightBall>().ThroughShotLine(aFrom.transform.position, aTo.transform.position, new GameObject[] { mSource, mDest, mSelect }.ToList()))
-		{
+		if (mLightBallAlways.GetComponent<LightBall>().ThroughShotLine(aFrom.transform.position, aTo.transform.position, new GameObject[] { mSource, mDest, mSelect }.ToList())) {
 			aShotLine.GetComponent<ShiftShotLine>().SetColor(mCanSelectColorShotLine, true);
 			ChangeCursorColor(Color.green);
 		}
@@ -561,8 +814,7 @@ public class MassShifter : MonoBehaviour {
 
 	bool CanShiftSource(GameObject aGameObject) {
 		if (aGameObject != null) {
-			if (aGameObject.GetComponent<WeightManager>().WeightLv != WeightManager.Weight.flying)
-			{
+			if (aGameObject.GetComponent<WeightManager>().WeightLv != WeightManager.Weight.flying) {
 				return true;
 			}
 		}
@@ -607,4 +859,28 @@ public class MassShifter : MonoBehaviour {
 
 	[SerializeField]
 	GameObject mShiftDestSE;
+
+	bool _mCanShift = true;
+
+	public bool mCanShift {
+		get {
+			return _mCanShift;
+		}
+		set {
+			if(value == true) {
+				if(mState == CSelectState.cCantShift) {
+					ChangeState(CSelectState.cNormal);
+				}
+			}
+			else {
+				ChangeState(CSelectState.cCantShift);
+			}
+			_mCanShift = value;
+		}
+	}
+
+	void DestroyLightBall(GameObject g) {
+		g.GetComponent<LightBall>().Stop();
+		Destroy(g, 1.0f);
+	}
 }

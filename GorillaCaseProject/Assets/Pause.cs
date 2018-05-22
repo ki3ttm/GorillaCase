@@ -10,21 +10,26 @@ public class Pause : MonoBehaviour {
     void Update() {
         // Escキーでポーズ / ポーズ解除
         if (Input.GetButtonDown("Pause")) {
-            PauseFunc();
+            //PauseFunc();
         }
     }
-
+	
     public void PauseFunc() {
-        // ポーズ
-        if (Time.timeScale != 0.0f) {
-            Time.timeScale = 0.0f;
-        }
-        // ポーズ解除
-        else {
-            Time.timeScale = 1.0f;
-        }
-
-        // 登録された関数を実行
-        pauseEvent.Invoke();
+		Speed(0.0f);
     }
+	public void Play() {
+		Speed(1.0f);
+	}
+
+
+	public void Speed(float aSpeed) {
+		Time.timeScale = aSpeed;
+
+		// 登録された関数を実行
+		pauseEvent.Invoke();
+	}
+
+	public float Speed() {
+		return Time.timeScale;
+	}
 }

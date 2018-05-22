@@ -35,6 +35,12 @@ public class Player : MonoBehaviour {
 	[SaitoTest_Disable]
 	public bool isJumping = false;
 
+	[SerializeField]
+	GameObject mModel;
+
+	[SerializeField]
+	GameObject mFrame;
+
 	bool jumpInput = false;
 	float jumpTime = 0.0f;
 
@@ -110,8 +116,13 @@ public class Player : MonoBehaviour {
 			lMoveInput = Input.GetAxis("JoyHorizontal");
 		}
 
-		GetComponent<Rigidbody>().MovePosition(transform.position + (Vector3.right * lMoveInput * walkSpd * Time.fixedDeltaTime));
+		Vector3 lMove = Vector3.right * lMoveInput * walkSpd * Time.fixedDeltaTime;
+
+		GetComponent<Rigidbody>().MovePosition(transform.position + lMove);
 		//transform.position += (Vector3.right * Input.GetAxis("Horizontal") * walkSpd);
+
+		mModel.GetComponent<Animator>().SetFloat("Speed", Mathf.Abs(lMoveInput));
+		mFrame.GetComponent<Animator>().SetFloat("Speed", Mathf.Abs(lMoveInput));
 	}
 
 	void Jump() {
