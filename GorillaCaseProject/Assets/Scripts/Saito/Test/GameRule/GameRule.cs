@@ -113,4 +113,26 @@ public class GameRule : MonoBehaviour {
 
 		yield return null;
 	}
+
+	private void OnGUI() {
+
+		using (new GUILayout.HorizontalScope()) {
+
+			if (GUILayout.Button("Stage1-1", GUILayout.MinWidth(200.0f), GUILayout.MinHeight(100.0f))) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(mSceneList[0]);
+			}
+			if (GUILayout.Button("Stage1-2", GUILayout.MinWidth(200.0f), GUILayout.MinHeight(100.0f))) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(mSceneList[1]);
+			}
+			if (GUILayout.Button("Stage1-3", GUILayout.MinWidth(200.0f), GUILayout.MinHeight(100.0f))) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(mSceneList[2]);
+			}
+			if (GUILayout.Button("Stage1-4", GUILayout.MinWidth(200.0f), GUILayout.MinHeight(100.0f))) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(mSceneList[3]);
+			}
+			if (GUILayout.Button("Stage1-5", GUILayout.MinWidth(200.0f), GUILayout.MinHeight(100.0f))) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene(mSceneList[4]);
+			}
+		}
+	}
 }

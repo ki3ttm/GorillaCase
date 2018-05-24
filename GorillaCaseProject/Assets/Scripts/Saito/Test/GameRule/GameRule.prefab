@@ -138,4 +138,7 @@ MonoBehaviour:
   mStateText: {fileID: 102654426465374410}
   mSceneList:
   - Stage1-1
+  - Stage1-2
   - Stage1-3
+  - Stage1-4
+  - Stage1-5
